@@ -102,4 +102,14 @@ OR
 ##### 20180320
 * Initial release.
 
+## License Details
+
+The GPL license of Sticky anything without cloning it grants you the right to use, study, share (copy), modify and (re)distribute the software, as long as these license terms are retained.
+
+## Disclamer
+
+NO WARRANTY OF ANY KIND! USE THIS SOFTWARES AND INFORMATIONS AT YOUR OWN RISK!
+[READ DISCLAMER.TXT!](https://joe.szalai.org/disclaimer/)
+License: GNU General Public License v3
+
 [![forthebadge](http://forthebadge.com/images/badges/built-by-developers.svg)](http://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/for-you.svg)](http://forthebadge.com)
