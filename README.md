@@ -2,7 +2,7 @@
 ## WordPress Plugin
 
 - Author: Joe Szalai
-- Version: 20171221
+- Version: 20180320
 - Plugin URL: https://joe.szalai.org/exopite/exopite-notificator/
 - Demo URL: https://joe.szalai.org/exopite/exopite-notificator/
 - Theme GitHub URL: https://github.com/JoeSz/Exopite-Notificator
