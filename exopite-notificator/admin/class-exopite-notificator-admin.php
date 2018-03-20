@@ -309,7 +309,7 @@ class Exopite_Notificator_Admin {
                 array(
                     'type'    => 'card',
                     'class'   => 'class-name', // for all fieds
-                    'content' => '<p>TEXT</p>',
+                    'content' => '<p>Notify by emails or Telegram chats messages on selected actions.</p><p>This plugin is created for security reason, more presiecly for information about potentially dangerous activities.</p>',
                     'header' => 'Information',
                 ),
 
