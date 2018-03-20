@@ -751,6 +751,8 @@ class Exopite_Notificator_Admin {
         // $this->write_log( '_telegram_send_messgae', 'message: ' . var_export( $message, true ) );
         // $this->write_log( '_telegram_send_messgae', '-----------------------------' );
 
+        do_action( 'exopite-notificator-telegram-before-send', $item, $message, $options );
+
         foreach ( $telegram_channels as $telegram_channel ) {
 
             $notifcaster = new Notifcaster_Class();
@@ -759,6 +761,8 @@ class Exopite_Notificator_Admin {
             $sentResult = $notifcaster->channel_text( $telegram_channel, $message );
 
         }
+
+        do_action( 'exopite-notificator-telegram-after-send', $item, $message, $options );
 
     }
 
@@ -799,6 +803,8 @@ class Exopite_Notificator_Admin {
         $body .= apply_filters( 'exopite-notificator-email-body', $message, $item );
         $body .= apply_filters( 'exopite-notificator-email-after-body', '', $item, $message );
 
+        do_action( 'exopite-notificator-email-before-send', $item, $message, $to, $subject, $body, $header );
+
         if ( ! wp_mail( $to, $subject, $body, $header ) ) {
 
             if ( $this->log ) {
@@ -818,6 +824,8 @@ class Exopite_Notificator_Admin {
             // }
 
         }
+
+        do_action( 'exopite-notificator-email-after-send', $item, $message, $to, $subject, $body, $header );
 
     }
 
@@ -931,7 +939,7 @@ class Exopite_Notificator_Admin {
             $template_fields['user-display-name'] = $current_user->display_name;
         }
 
-        return $template_fields;
+        return apply_filters( 'exopite-notificator-get-default-template-fields', $template_fields );
 
     }
 
