@@ -415,7 +415,7 @@ class Exopite_Notificator_Admin {
                             'type'    => 'textarea',
                             'class'   => 'alert-action-target-js',
                             'title'   => esc_html__( 'Notification body', 'exopite-notifier' ),
-                            'default' => '{{alert-type}} on {{site-name}}' . PHP_EOL . 'IP: {{user-ip}}' . PHP_EOL . 'IP: {{user-agent}}' . PHP_EOL . 'Date: {{datetime}}',
+                            'default' => '{{alert-type}} on {{site-name}}' . PHP_EOL . 'IP: {{user-ip}}' . PHP_EOL . 'Browser: {{user-agent}}' . PHP_EOL . 'Date: {{datetime}}',
                             'after'   => '<mute>' . esc_html__( 'Available fields: ', 'exopite-notifier' ) . '<br><code class="availabe-fields">' . $this->get_fields() . '</code><br>' . esc_html( 'Note: not all field are available on all notification types. ', 'exopite-notifier' ) . '</mute>',
                         ),
 
