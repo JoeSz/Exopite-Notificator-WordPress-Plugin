@@ -71,6 +71,13 @@ Available placeholders in message:
 - comment-old_status
 - cf7-[your-field-name] - all fields what user in Contact Form 7 inserted.
 
+## Screenshots
+![Exopite Notification Screens](assets/screenshot-1.jpg "Exopite Notification Screens")
+
+![Exopite Notification Options](assets/screenshot-2.jpg "Exopite Notification Options")
+
+![Exopite Notification Notifications](assets/screenshot-3.jpg "Exopite Notification Notifications")
+
 ## Installation
 
 1. [x] Upload `exopite-multifilter` to the `/wp-content/plugins/exopite-responsive-displayer/` directory
