@@ -72,11 +72,11 @@ Available placeholders in message:
 - cf7-[your-field-name] - all fields what user in Contact Form 7 inserted.
 
 ## Screenshots
-![Exopite Notification Screens](assets/screenshot-1.jpg "Exopite Notification Screens")
+![](assets/screenshot-1.png "Exopite Notification Screens")
 
-![Exopite Notification Options](assets/screenshot-2.jpg "Exopite Notification Options")
+![](assets/screenshot-2.png "Exopite Notification Options")
 
-![Exopite Notification Notifications](assets/screenshot-3.jpg "Exopite Notification Notifications")
+![](assets/screenshot-3.png "Exopite Notification Notifications")
 
 ## Installation
 
