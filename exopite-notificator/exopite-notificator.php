@@ -24,10 +24,16 @@
  * Text Domain:       exopite-notificator
  * Domain Path:       /languages
  */
-/*
+/**
  * This plugin is created for security reason, more presiecly for information about potentially dangerous activities.
  */
-/*
+/**
+ * ToDos:
+ * - store plugin in variable
+ * - make telegram/email sending function public for other plugins to use
+ * - maybe a little "API" for send? function send($where, $what, $with)
+ * - maybe add: viber, sms, ...?
+ *
  * INFOS
  *   - force strong password? (if hacked and attacker try to use a week one?)
  *     https://wordpress.stackexchange.com/questions/149413/enforcing-password-complexity
