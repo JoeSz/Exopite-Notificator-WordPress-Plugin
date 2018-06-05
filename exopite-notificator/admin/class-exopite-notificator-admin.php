@@ -1340,7 +1340,7 @@ class Exopite_Notificator_Admin {
     }
 
     /*
-     * Hangle new comment and update comment actions for post/page meta
+     * Handle new comment and update comment actions for post/page meta
      */
     public function do_meta_comment_actions( $post_meta, $template_fields, $type ) {
 
