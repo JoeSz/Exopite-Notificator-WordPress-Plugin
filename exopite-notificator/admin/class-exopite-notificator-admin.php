@@ -1498,6 +1498,7 @@ class Exopite_Notificator_Admin {
         }
 
     }
+
     /**
      * @param string   $new_status New status of comment.
      * @param string   $old_status Old status of comment.
