@@ -897,8 +897,8 @@ class Exopite_Notificator_Admin {
         $mail->Password = $options['smtp_password'];                           // SMTP password
         if ( ! empty( $options['smtp_security'] ) ) $mail->SMTPSecure = $options['smtp_security'];                            // Enable encryption, 'ssl' also accepted
         $mail->Port = $options['smtp_port'];
-        $mail->SetFrom( $options['smtp_from_email'], apply_filters( 'exopite-notificator-sender-name', $sender_name ) );
-        $mail->addReplyTo( $options['smtp_reply_email'], $options['smtp_from_name'] );
+        $mail->SetFrom( $options['smtp_from_email'], apply_filters( 'exopite-notificator-sender-name', $options['smtp_from_name'] ) );
+        $mail->addReplyTo( $options['smtp_reply_email'], apply_filters( 'exopite-notificator-sender-name', $options['smtp_from_name'] ) );
         $mail->CharSet = 'UTF-8';
 
         // Check comma, if yes, explode
