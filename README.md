@@ -2,7 +2,7 @@
 ## WordPress Plugin
 
 - Author: Joe Szalai
-- Version: 20180320
+- Version: 20180608
 - Plugin URL: https://joe.szalai.org/exopite/exopite-notificator/
 - Demo URL: https://joe.szalai.org/exopite/exopite-notificator/
 - Theme GitHub URL: https://github.com/JoeSz/Exopite-Notificator
@@ -105,6 +105,9 @@ OR
 * Tested on Android phone 5.0+, Android tablet 5.1+, Windows 10
 
 ## Changelog
+
+##### 20180608
+* Add SMTP override for emails. You can override all possibilities individually, but you can add only one SMTP account.
 
 ##### 20180320
 * Initial release.
