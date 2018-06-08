@@ -213,6 +213,14 @@ class Exopite_Notificator_Admin {
                 ),
 
                 array(
+                    'id'      => 'post_email_smtp_override',
+                    'type'    => 'switcher',
+                    'title'   => esc_html__( 'Individual SMTP override', 'exopite-notifier' ),
+                    'default' => 'no',
+                    'info'   => '<mute>' . esc_html__( 'You have to set SMTP first in settings.', 'exopite-notifier' ) . '</mute>',
+                ),
+
+                array(
                     'id'      => 'post_telegram_recipients',
                     'type'    => 'text',
                     'title'   => esc_html__( 'Telegram Recipients', 'exopite-notifier' ),
@@ -280,6 +288,14 @@ class Exopite_Notificator_Admin {
                 ),
 
                 array(
+                    'id'      => 'comment_email_smtp_override',
+                    'type'    => 'switcher',
+                    'title'   => esc_html__( 'Individual SMTP override', 'exopite-notifier' ),
+                    'default' => 'no',
+                    'info'   => '<mute>' . esc_html__( 'You have to set SMTP first in settings.', 'exopite-notifier' ) . '</mute>',
+                ),
+
+                array(
                     'id'      => 'comment_telegram_recipients',
                     'type'    => 'text',
                     'title'   => esc_html__( 'Telegram Recipients', 'exopite-notifier' ),
@@ -309,7 +325,7 @@ class Exopite_Notificator_Admin {
                 array(
                     'type'    => 'card',
                     'class'   => 'class-name', // for all fieds
-                    'content' => '<p>Notify by emails or Telegram chats messages on selected actions.</p><p>This plugin is created for security reason, more presiecly for information about potentially dangerous activities.</p>',
+                    'content' => '<p>' . esc_html__( 'Notify by emails or Telegram chats messages on selected actions.</p><p>This plugin is created for security reason, more presiecly for information about potentially dangerous activities.', 'exopite-notifier' ) . '</p>',
                     'header' => 'Information',
                 ),
 
@@ -330,9 +346,97 @@ class Exopite_Notificator_Admin {
 
                 array(
                     'type'    => 'backup',
-                    'title'   => 'Backup',
+                    'title'   => esc_html__( 'Backup', 'exopite-notifier' ),
                 ),
 
+            ),
+        );
+
+        $fields[] = array(
+            'name'   => 'smtp',
+            'title'  => esc_html__( 'SMTP Settings', 'exopite-notifier' ),
+            'id'     => 'post',
+            'icon'   => 'fa fa-server',
+            'fields' => array(
+
+                array(
+                    'type'    => 'card',
+                    'class'   => 'class-name', // for all fieds
+                    'content' => esc_html__( 'You only need this, if you want to override standard WordPress/Hosting email SMTP server individually.', 'exopite-notifier' ),
+                    // 'header' => 'Information',
+                ),
+
+                array(
+                    'id'          => 'smtp_host',
+                    'type'        => 'text',
+                    'title'       => esc_html__( 'Host', 'exopite-notifier' ),
+                    'attributes'    => array(
+                        'placeholder' => 'mail.server.com',
+                    ),
+                ),
+
+                array(
+                    'id'          => 'smtp_port',
+                    'type'        => 'text',
+                    'title'       => esc_html__( 'Port', 'exopite-notifier' ),
+                    'attributes'    => array(
+                        'placeholder' => '587',
+                    ),
+                    'default' => '587',
+                ),
+
+                array(
+                    'id'      => 'smtp_security',
+                    'type'    => 'select',
+                    'title'   => esc_html__( 'Security', 'exopite-notifier' ),
+                    'options' => array(
+                        ''          => esc_html__( 'None', 'exopite-notifier' ),
+                        'tls'       => 'TLS',
+                        'ssl'       => 'SSL',
+                    ),
+                    'default_option' => 'tls',
+                    'class'       => 'chosen',
+                ),
+
+                array(
+                    'id'          => 'smtp_user',
+                    'type'        => 'text',
+                    'title'       => esc_html__( 'User', 'exopite-notifier' ),
+                ),
+
+                array(
+                    'id'     => 'smtp_password',
+                    'type'   => 'password',
+                    'title'  => esc_html__( 'Password', 'exopite-notifier' ),
+                ),
+
+                array(
+                    'id'      => 'smtp_html',
+                    'type'    => 'switcher',
+                    'title'   => 'HTML',
+                    'default' => 'no',
+                ),
+
+                array(
+                    'id'          => 'smtp_from_name',
+                    'type'        => 'text',
+                    'title'       => esc_html__( 'From Name', 'exopite-notifier' ),
+                    'default' => get_bloginfo(),
+                ),
+
+                array(
+                    'id'          => 'smtp_from_email',
+                    'type'        => 'text',
+                    'title'       => esc_html__( 'From E-Mail', 'exopite-notifier' ),
+                    'default' => get_option( 'admin_email' ),
+                ),
+
+                array(
+                    'id'          => 'smtp_reply_email',
+                    'type'        => 'text',
+                    'title'       => esc_html__( 'Reply E-Mail', 'exopite-notifier' ),
+                    'default' => get_option( 'admin_email' ),
+                ),
             ),
         );
 
@@ -370,6 +474,14 @@ class Exopite_Notificator_Admin {
                             'type'    => 'switcher',
                             'title'   => esc_html__( 'Active', 'exopite-notifier' ),
                             'default' => 'yes',
+                        ),
+
+                        array(
+                            'id'      => 'email_smtp_override',
+                            'type'    => 'switcher',
+                            'title'   => esc_html__( 'Individual SMTP override', 'exopite-notifier' ),
+                            'default' => 'no',
+                            'info'   => '<mute>' . esc_html__( 'You have to set SMTP first in settings.', 'exopite-notifier' ) . '</mute>',
                         ),
 
                         array(
@@ -721,7 +833,7 @@ class Exopite_Notificator_Admin {
 
     }
 
-    /*
+    /**
      * https://core.telegram.org/bots
      * https://tutorials.botsfloor.com/creating-a-bot-using-the-telegram-bot-api-5d3caed3266d
      * https://www.sohamkamani.com/blog/2016/09/21/making-a-telegram-bot/
@@ -746,10 +858,6 @@ class Exopite_Notificator_Admin {
         $message = html_entity_decode( $message );
 
         // $this->write_log( '_telegram_send_messgae', 'item: ' . var_export( $item, true ) );
-        // $this->write_log( '_telegram_send_messgae', 'telegram_channels: ' . var_export( $telegram_channels, true ) );
-        // $this->write_log( '_telegram_send_messgae', 'token: ' . var_export( $options['telegram_token'], true ) );
-        // $this->write_log( '_telegram_send_messgae', 'message: ' . var_export( $message, true ) );
-        // $this->write_log( '_telegram_send_messgae', '-----------------------------' );
 
         do_action( 'exopite-notificator-telegram-before-send', $item, $message, $options );
 
@@ -766,6 +874,65 @@ class Exopite_Notificator_Admin {
 
     }
 
+    public function send_mail( $emails, $subject, $message ) {
+
+        if ( ! class_exists( 'PHPMailer' ) ) {
+            include_once( ABSPATH . WPINC . '/class-phpmailer.php' );
+        }
+
+        $options = get_option( $this->plugin_name );
+
+        $mail = new PHPMailer();
+        if ( $options['smtp_html'] == 'yes' ) {
+            $mail->IsHTML( true );
+        } else {
+            $mail->ContentType = 'text/plain';
+            $mail->IsHTML( false );
+        }
+
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = $options['smtp_host'];  // Specify main and backup server
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Username = $options['smtp_user'];                            // SMTP username
+        $mail->Password = $options['smtp_password'];                           // SMTP password
+        if ( ! empty( $options['smtp_security'] ) ) $mail->SMTPSecure = $options['smtp_security'];                            // Enable encryption, 'ssl' also accepted
+        $mail->Port = $options['smtp_port'];
+        $mail->SetFrom( $options['smtp_from_email'], apply_filters( 'exopite-notificator-sender-name', $sender_name ) );
+        $mail->addReplyTo( $options['smtp_reply_email'], $options['smtp_from_name'] );
+        $mail->CharSet = 'UTF-8';
+
+        // Check comma, if yes, explode
+        if( ! is_array( $emails ) && strpos( $emails, ',' ) !== false ) {
+            $emails = explode( ',', $emails );
+        }
+
+        $emails = apply_filters( 'exopite-notificator-subject', $emails );
+
+        if ( is_array( $emails ) ) {
+            foreach ( $emails as $email ) {
+                $mail->AddAddress( $email );
+            }
+        } else {
+            $mail->AddAddress( $emails );
+        }
+
+
+        $mail->Subject = apply_filters( 'exopite-notificator-subject', $subject );
+        $mail->Body = apply_filters( 'exopite-notificator-message', $message );
+        $info = $mail->Send();
+
+        // if ( $this->log ) {
+        //     $this->write_log( 'send_message_email', 'emails: ' . var_export( $emails, true ) );
+        //     $this->write_log( 'send_message_email', 'info: ' . var_export( $info, true ) );
+        //     $this->write_log( 'send_message_email', 'email: ' . var_export( $mail, true ) );
+        //     $this->write_log( 'send_message_email', 'options: ' . var_export( $options, true ) );
+        //     $this->write_log( 'send_message_email', '------------------------------------------------------------------' . PHP_EOL . PHP_EOL );
+        // }
+
+        return $info;
+
+    }
+
     public function send_message_email( $item, $message ) {
 
         // write the email content
@@ -776,28 +943,35 @@ class Exopite_Notificator_Admin {
         $actions = $this->get_all_actions();
 
         $to = array();
-        if ( ! empty( $item['email_recipients'] ) && is_array( $item['email_recipients'] ) ) {
-            $to = $item['email_recipients'];
+        $email_recipients = array( 'email_recipients', 'post_email_recipients', 'comment_email_recipients' );
+        foreach ( $email_recipients as $email_recipient ) {
+
+            if ( ! empty( $item[ $email_recipient] ) && is_array( $item[ $email_recipient] ) ) {
+                $to = $item[ $email_recipient];
+            }
         }
 
-        $to_additional = apply_filters( 'email_recipients_additional', $item['email_recipients_additional'], $item, $message );
-        if ( ! empty( $to_extra ) ) {
-            $to_extra = explode( ',', preg_replace( '/\s+/', '', $to_additional ) );
-        } else {
-            $to_extra = array();
+        $email_recipients_additional = array( 'email_recipients_additional', 'post_email_recipients_additional', 'comment_email_recipients_additional' );
+        $to_extra = array();
+        foreach ( $email_recipients_additional as $email_recipient_additional ) {
+            $to_additional = apply_filters( $email_recipient_additional, $item[$email_recipient_additional], $item, $message );
+
+
+            if ( isset( $to_additional ) && ! empty( $to_additional ) ) {
+                $to_extra = explode( ',', preg_replace( '/\s+/', '', $to_additional ) );
+            }
         }
 
         $to = array_filter( array_merge( $to, $to_extra ) );
 
-        if ( empty( $to ) ) return;
+        if ( empty( $to ) ) {
+
+            if ( $this->log ) $this->write_log( 'email-failed', 'There is/are no email/s to send.' );
+
+            return;
+        }
 
         $subject = "=?utf-8?B?" . base64_encode( get_bloginfo( 'name' ) . ' | ' . $actions[$item['email_type']] ) . "?=";
-
-        // $this->write_log( '_email_send_messgae', 'item: ' . var_export( $item, true ) );
-        // $this->write_log( '_email_send_messgae', 'message: ' . var_export( $message, true ) );
-        // $this->write_log( '_email_send_messgae', 'to: ' . var_export( $to, true ) );
-        // $this->write_log( '_email_send_messgae', 'subject: ' . var_export( $subject, true ) );
-        // $this->write_log( '_email_send_messgae', '----------------------------------------' );
 
         $body = apply_filters( 'exopite-notificator-email-before-body', '', $item, $message );
         $body .= apply_filters( 'exopite-notificator-email-body', $message, $item );
@@ -805,27 +979,29 @@ class Exopite_Notificator_Admin {
 
         do_action( 'exopite-notificator-email-before-send', $item, $message, $to, $subject, $body, $header );
 
-        if ( ! wp_mail( $to, $subject, $body, $header ) ) {
+        if ( $item['email_smtp_override'] == 'yes' || $item['post_email_smtp_override'] == 'yes' || $item['comment_email_smtp_override'] == 'yes' ) {
 
-            if ( $this->log ) {
-
-                $log_line = 'Sending email failed to ' . $to;
-                $this->write_log( 'email-failed', $log_line );
-
-            }
+            $ret =  $this->send_mail( $to, $subject, $body );
 
         } else {
 
-            // if ( $this->log ) {
+            $ret =  wp_mail( $to, $subject, $body, $header );
 
-            //     $log_line = 'Email sent to ' . $to;
-            //     $this->write_log( 'email-success', $log_line );
+        }
 
-            // }
+        if ( ! $ret ) {
+
+            if ( $this->log ) $this->write_log( 'email-failed', 'Sending email failed to ' . var_export( $to, true ) );
+
+        } else {
+
+            if ( $this->log ) $this->write_log( 'email-success', 'Email sent to ' . var_export( $to, true ) );
 
         }
 
         do_action( 'exopite-notificator-email-after-send', $item, $message, $to, $subject, $body, $header );
+
+        return $ret;
 
     }
 
@@ -980,9 +1156,9 @@ class Exopite_Notificator_Admin {
         // Add alert type to template fields
         $template_fields['alert-type'] = $item[$key . '_type'];
 
-        // $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'item: ' . var_export( $item, true ) );
-        // $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'template_fields: ' . var_export( $template_fields, true ) );
-        // $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'template: ' . $this->generate_template( $template_fields, $item[$key . '_template'] ) );
+        // if ( $this->log ) $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'item: ' . var_export( $item, true ) );
+        // if ( $this->log ) $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'template_fields: ' . var_export( $template_fields, true ) );
+        // if ( $this->log ) $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'template: ' . $this->generate_template( $template_fields, $item[$key . '_template'] ) );
 
         // Run callback functions (send_message_email; send_message_telegram; maybe more later)
         call_user_func_array( array( $this, 'send_message_' . $key ), array( $item, $this->generate_template( $template_fields, $item[$key . '_template'] ) ) );
@@ -1008,7 +1184,7 @@ class Exopite_Notificator_Admin {
 
     }
 
-    /*
+    /**
      * Fires before the user's password is reset, but not on reset request
      */
     public function password_reset( $user_info, $new_pass ) {
@@ -1031,7 +1207,7 @@ class Exopite_Notificator_Admin {
         // Create log if requested.
         if ( $this->log ) $this->generate_log( 'password-reset', $template_fields );
 
-        /*
+        /**
          * - loop plugin options
          * - run callback: do_action
          * - run callback: send_message_[type]
@@ -1050,7 +1226,7 @@ class Exopite_Notificator_Admin {
 
     }
 
-    /*
+    /**
      * Login success and failed callback
      */
     public function user_login( $username, $password ) {
@@ -1350,6 +1526,7 @@ class Exopite_Notificator_Admin {
             $item_meta['telegram_recipients'] = $post_meta[0]['comment_telegram_recipients'];
             $item_meta['email_recipients'] = $post_meta[0]['comment_email_recipients'];
             $item_meta['email_recipients_additional'] = $post_meta[0]['comment_email_recipients_additional'];
+            $item_meta['email_smtp_override'] = $post_meta[0]['comment_email_smtp_override'];
 
             $item_meta['email_type'] = $type;
             $template_fields['alert-type'] = $type;
@@ -1404,8 +1581,11 @@ class Exopite_Notificator_Admin {
         // If metabox in plugin options is activated
         if ( ! isset( $options['metabox'] ) || $options['metabox'] == 'yes' ) {
 
-            // PGet post/page meta
+            // Get post/page meta
             $post_meta = get_post_meta( $comment->comment_post_ID, $this->plugin_name . '-meta' );
+
+            $item['email_smtp_override'] = $post_meta[0]['comment_email_smtp_override'];
+            if ( $this->log ) $this->write_log( 'comment-new', 'postmeta: ' . var_export( $post_meta, true ) );
 
             // Check if plugin option override is activated.
             // User can turn off alert in meta for new comment, comment update, post update and post delete.
@@ -1472,6 +1652,7 @@ class Exopite_Notificator_Admin {
 
             // POST META
             $post_meta = get_post_meta( $comment['comment_post_ID'], $this->plugin_name . '-meta' );
+            $item['email_smtp_override'] = $post_meta[0]['comment_email_smtp_override'];
 
             if ( isset( $post_meta[0]['active_options'] ) && $post_meta[0]['active_options'] == 'no' ) {
 
@@ -1601,6 +1782,7 @@ class Exopite_Notificator_Admin {
         if ( ! isset( $options['metabox'] ) || $options['metabox'] == 'yes' ) {
 
             $post_meta = get_post_meta( $post_id, $this->plugin_name . '-meta' );
+            $item['email_smtp_override'] = $post_meta[0]['post_email_smtp_override'];
 
             if ( isset( $post_meta[0]['active_options'] ) && $post_meta[0]['active_options'] == 'no' ) {
 
