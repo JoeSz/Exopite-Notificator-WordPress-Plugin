@@ -249,6 +249,9 @@ class Exopite_Notificator {
         // Contact From 7 email send
         $this->loader->add_action( 'wpcf7_before_send_mail', $plugin_admin, 'wpcf7_before_send_mail' );
 
+        // Hook for other plugins and themes to send messages and access plugin functions
+        $this->loader->add_action( 'shutdown', $plugin_admin, 'do_actions' );
+
 	}
 
 	/**

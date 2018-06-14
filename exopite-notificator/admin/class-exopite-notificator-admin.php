@@ -971,7 +971,7 @@ class Exopite_Notificator_Admin {
             return;
         }
 
-        $subject = "=?utf-8?B?" . base64_encode( get_bloginfo( 'name' ) . ' | ' . $actions[$item['email_type']] ) . "?=";
+        $subject = "=?utf-8?B?" . base64_encode( apply_filters( 'exopite-notificator-email-subject', get_bloginfo( 'name' ) . ' | ' . $actions[$item['email_type']], $item ) ) . "?=";
 
         $body = apply_filters( 'exopite-notificator-email-before-body', '', $item, $message );
         $body .= apply_filters( 'exopite-notificator-email-body', $message, $item );
@@ -1002,6 +1002,12 @@ class Exopite_Notificator_Admin {
         do_action( 'exopite-notificator-email-after-send', $item, $message, $to, $subject, $body, $header );
 
         return $ret;
+
+    }
+
+    public function do_actions() {
+
+        do_action( 'exopite-notificator-custom', $this );
 
     }
 
