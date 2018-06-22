@@ -250,7 +250,8 @@ class Exopite_Notificator {
         $this->loader->add_action( 'wpcf7_before_send_mail', $plugin_admin, 'wpcf7_before_send_mail' );
 
         // Hook for other plugins and themes to send messages and access plugin functions
-        $this->loader->add_action( 'shutdown', $plugin_admin, 'do_actions' );
+        $this->loader->add_action( 'shutdown', $plugin_admin, 'do_actions', 999, 1 );
+        $this->loader->add_action( 'shutdown', $plugin_admin, 'send_messages_hook', 999, 1 );
 
 	}
 

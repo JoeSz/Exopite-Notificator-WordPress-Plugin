@@ -394,7 +394,7 @@ class Exopite_Notificator_Admin {
                         'tls'       => 'TLS',
                         'ssl'       => 'SSL',
                     ),
-                    'default_option' => 'tls',
+                    'default_option' => 'TLS',
                     'class'       => 'chosen',
                 ),
 
@@ -846,10 +846,13 @@ class Exopite_Notificator_Admin {
      */
     public function send_message_telegram( $item, $message ) {
 
+        $options = get_option( $this->plugin_name );
+
+        // If no recipient definied, then try default one
+        if ( empty( $item['telegram_recipients'] ) ) $item['telegram_recipients'] = $options['telegram_default_channel'];
         $telegram_channels_options = apply_filters( 'telegram_recipients', $item['telegram_recipients'], $item, $message );
         if ( empty( $telegram_channels_options ) ) return;
         $telegram_channels = array_filter( explode( ',', preg_replace( '/\s+/', '', $telegram_channels_options ) ) );
-        $options = get_option( $this->plugin_name );
 
         $message = apply_filters( 'exopite-notificator-telegram-before-body', '', $item, $message ) .
                    apply_filters( 'exopite-notificator-telegram-body', $message, $item ) .
@@ -946,8 +949,11 @@ class Exopite_Notificator_Admin {
         $email_recipients = array( 'email_recipients', 'post_email_recipients', 'comment_email_recipients' );
         foreach ( $email_recipients as $email_recipient ) {
 
-            if ( ! empty( $item[ $email_recipient] ) && is_array( $item[ $email_recipient] ) ) {
-                $to = $item[ $email_recipient];
+            if ( ! empty( $item[$email_recipient] ) && is_array( $item[$email_recipient] ) ) {
+                $to = $item[$email_recipient];
+            } elseif( ! empty( $item[$email_recipient] ) ) {
+                // If not an array, then it is a comma separated list on one email address
+                $to = explode( ',', $item[$email_recipient] );
             }
         }
 
@@ -955,7 +961,6 @@ class Exopite_Notificator_Admin {
         $to_extra = array();
         foreach ( $email_recipients_additional as $email_recipient_additional ) {
             $to_additional = apply_filters( $email_recipient_additional, $item[$email_recipient_additional], $item, $message );
-
 
             if ( isset( $to_additional ) && ! empty( $to_additional ) ) {
                 $to_extra = explode( ',', preg_replace( '/\s+/', '', $to_additional ) );
@@ -971,8 +976,13 @@ class Exopite_Notificator_Admin {
             return;
         }
 
-        $subject = "=?utf-8?B?" . base64_encode( apply_filters( 'exopite-notificator-email-subject', get_bloginfo( 'name' ) . ' | ' . $actions[$item['email_type']], $item ) ) . "?=";
+        // Generate subject
+        $email_subject = array();
+        $email_subject[] = ( empty( $item['email_disable_bloginfo'] ) || $item['email_disable_bloginfo'] != 'yes' ) ? get_bloginfo( 'name' ) : '';
+        $email_subject[] = ( empty( $actions[$item['email_type']] ) ) ? $item['email_type'] : $actions[$item['email_type']];
+        $subject = "=?utf-8?B?" . base64_encode( apply_filters( 'exopite-notificator-email-subject', implode( ' | ', array_filter( $email_subject ) ), $item ) ) . "?=";
 
+        // Hook to filter message
         $body = apply_filters( 'exopite-notificator-email-before-body', '', $item, $message );
         $body .= apply_filters( 'exopite-notificator-email-body', $message, $item );
         $body .= apply_filters( 'exopite-notificator-email-after-body', '', $item, $message );
@@ -1005,6 +1015,60 @@ class Exopite_Notificator_Admin {
 
     }
 
+    /**
+     * How to use (eg:)
+     *
+     * add_filter( 'exopite-notificator-send-messages', array( $this, 'send_notification' ), 10, 1 );
+     * public function send_notification( $messages ) {
+     *     $messages[] = array(
+     *         'type'                => 'telegram',
+     *         'message'             => 'test message',
+     *         'telegram_recipients' => 'TELEGRAM_CHAT_ID',
+     *     );
+     *
+     *     $messages[] = array(
+     *         'type' => 'email',
+     *         'message'                => 'This is the message at {{datetime}} from {{user-ip}}',
+     *         'email_recipients'       => 'e@mail.to',
+     *         'email_subject'          => 'Email subject',
+     *         'email_smtp_override'    => 'yes',
+     *         'email_disable_bloginfo' => 'yes',
+     *     );
+     *
+     *     return $messages;
+     *
+     * }
+     */
+    public function send_messages_hook() {
+
+        $messages = apply_filters( 'exopite-notificator-send-messages', array() );
+
+        if ( ! empty( $messages ) && is_array( $messages ) ) {
+            foreach ( $messages as $message ) {
+                $item = array();
+                // comma separats list
+                $item[$message['type'] . '_recipients'] = $message[$message['type'] . '_recipients'];
+                $item['email_type'] = $message['email_subject'];
+                $item['email_smtp_override'] = $message['email_smtp_override'];
+                $item['email_disable_bloginfo'] = $message['email_disable_bloginfo'];
+                // Get default fields
+                $template_fields = $this->get_template_fields();
+                call_user_func_array( array( $this, 'send_message_' . $message['type'] ), array( $item, $this->generate_template( $template_fields, $message['message'] ) ) );
+            }
+        }
+
+    }
+
+    /**
+     * How to use (eg:)
+     *
+     * add_action( 'exopite-notificator-custom', array( $this, 'use_notificator_action_hook' ), 10, 1 );
+     * public function use_notificator_action_hook( $notificator_object ) {
+     *     // $notificator_object is this class with all the functions
+     *     var_export( $notificator_object->get_fields() );
+     * }
+     *
+     */
     public function do_actions() {
 
         do_action( 'exopite-notificator-custom', $this );
