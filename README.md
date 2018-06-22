@@ -2,7 +2,7 @@
 ## WordPress Plugin
 
 - Author: Joe Szalai
-- Version: 20180608
+- Version: 20180622
 - Plugin URL: https://joe.szalai.org/exopite/exopite-notificator/
 - Demo URL: https://joe.szalai.org/exopite/exopite-notificator/
 - Theme GitHub URL: https://github.com/JoeSz/Exopite-Notificator
@@ -71,6 +71,57 @@ Available placeholders in message:
 - comment-old_status
 - cf7-[your-field-name] - all fields what user in Contact Form 7 inserted.
 
+## Development
+
+You can use this plugin to send notifications from your theme or plugins via hooks.
+
+###Template fields can be used:
+- user-ip
+- datetime
+- site-url
+- site-name
+- user-agent
+#### if user logged in
+- username
+- user-email
+- user-display-name
+
+
+### exopite-notificator-send-messages filter from a class:
+
+```php
+add_filter( 'exopite-notificator-send-messages', array( $this, 'send_notification' ), 10, 1 );
+public function send_notification( $messages ) {
+    $messages[] = array(
+        'type'                => 'telegram',
+        'message'             => 'test message',
+        'telegram_recipients' => 'TELEGRAM_CHAT_ID',
+    );
+
+    $messages[] = array(
+        'type' => 'email',
+        'message'                => 'This is the message at {{datetime}} from {{user-ip}}',
+        'email_recipients'       => 'e@mail.to',
+        'email_subject'          => 'Email subject',
+        'email_smtp_override'    => 'yes',
+        'email_disable_bloginfo' => 'yes',
+    );
+
+    return $messages;
+
+}
+```
+### exopite-notificator-custom action from a class:
+
+```php
+add_action( 'exopite-notificator-custom', array( $this, 'use_notificator_action_hook' ), 10, 1 );
+public function use_notificator_action_hook( $notificator_object ) {
+    // $notificator_object is this class with all the functions
+    // var_export( $notificator_object->get_fields() );
+}
+```
+
+
 ## Screenshots
 ![](assets/screenshot-1.png "Exopite Notification Screens")
 
@@ -105,6 +156,10 @@ OR
 * Tested on Android phone 5.0+, Android tablet 5.1+, Windows 10
 
 ## Changelog
+
+##### 20180622
+* Allow other plugins or themes to use Exopite Notificator class methodes.
+* Add hooks to allow other plugins or themes to send notifications
 
 ##### 20180608
 * Add SMTP override for emails. You can override all possibilities individually, but you can add only one SMTP account.
