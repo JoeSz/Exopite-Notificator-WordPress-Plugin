@@ -32,7 +32,12 @@
  * - store plugin in variable
  * - make telegram/email sending function public for other plugins to use
  * - maybe a little "API" for send? function send($where, $what, $with)
- * - maybe add: viber, sms, ...?
+ * - maybe add:
+ *   - sms!?
+ *   - kik (https://github.com/pimax/kik-bot-php)
+ *   - wechat (https://github.com/garbetjie/wechat-php)
+ *   Not adding:
+ *   - viber: must have a business/public account
  *
  * INFOS
  *   - force strong password? (if hacked and attacker try to use a week one?)
