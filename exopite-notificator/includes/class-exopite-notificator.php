@@ -63,6 +63,14 @@ class Exopite_Notificator {
 	 */
 	protected $version;
 
+    /**
+     * Store plugin admin class to allow public access.
+     *
+     * @since    20180622
+     * @var object      The admin class.
+     */
+    public $plugin_admin;
+
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -187,25 +195,25 @@ class Exopite_Notificator {
 
         }
 
-		$plugin_admin = new Exopite_Notificator_Admin( $this->get_plugin_name(), $this->get_version() );
+		$this->plugin_admin = new Exopite_Notificator_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_scripts' );
 
         // Save/Update our plugin options
-        $this->loader->add_action('init', $plugin_admin, 'create_menu');
+        $this->loader->add_action('init', $this->plugin_admin, 'create_menu');
 
         // Login success or failed
-        $this->loader->add_action( 'wp_authenticate', $plugin_admin, 'user_login', 10, 3 );
+        $this->loader->add_action( 'wp_authenticate', $this->plugin_admin, 'user_login', 10, 3 );
 
         // Password reset
-        $this->loader->add_action( 'password_reset', $plugin_admin, 'password_reset', 10, 2 );
+        $this->loader->add_action( 'password_reset', $this->plugin_admin, 'password_reset', 10, 2 );
 
         // Password change
-        $this->loader->add_action( 'profile_update', $plugin_admin, 'profile_update', 10, 2 );
+        $this->loader->add_action( 'profile_update', $this->plugin_admin, 'profile_update', 10, 2 );
 
         // User register
-        $this->loader->add_action( 'user_register', $plugin_admin, 'user_register', 10, 2 );
+        $this->loader->add_action( 'user_register', $this->plugin_admin, 'user_register', 10, 2 );
 
         /*
          * if user registration and email is on, override original functions
@@ -215,13 +223,13 @@ class Exopite_Notificator {
         remove_action('edit_user_created_user', 'wp_send_new_user_notifications', 10, 2);
 
         // Replace with our action that sends the user email only
-        $this->loader->add_action('register_new_user', $plugin_admin, 'send_new_user_notifications');
-        $this->loader->add_action('edit_user_created_user', $plugin_admin, 'send_new_user_notifications', 10, 2);
+        $this->loader->add_action('register_new_user', $this->plugin_admin, 'send_new_user_notifications');
+        $this->loader->add_action('edit_user_created_user', $this->plugin_admin, 'send_new_user_notifications', 10, 2);
 
         // User delete
-        $this->loader->add_action( 'delete_user', $plugin_admin, 'delete_user' );
+        $this->loader->add_action( 'delete_user', $this->plugin_admin, 'delete_user' );
 
-        $this->loader->add_filter( 'registration_errors', $plugin_admin, 'registration_errors', 10, 3 );
+        $this->loader->add_filter( 'registration_errors', $this->plugin_admin, 'registration_errors', 10, 3 );
         // $this->loader->add_action( 'register_post', 'prevent_register_user', 10, 3 );
 
         /*
@@ -233,7 +241,7 @@ class Exopite_Notificator {
          *
          * Add priority 100, so our hook run after meta is also saved.
          */
-        $this->loader->add_action( 'save_post', $plugin_admin, 'post_or_page', 100, 3 );
+        $this->loader->add_action( 'save_post', $this->plugin_admin, 'post_or_page', 100, 3 );
 
         /*
          * Nofity users when approve a comment.
@@ -242,16 +250,16 @@ class Exopite_Notificator {
          * Plugin Name: Post Notification by Email
          * Plugin URI: http://wordpress.org/plugins/notify-users-e-mail/
          */
-        $this->loader->add_action( 'wp_insert_comment', $plugin_admin, 'new_comment', 10, 2 );
-        $this->loader->add_action( 'edit_comment', $plugin_admin, 'edit_comment', 10, 2 );
-        $this->loader->add_action( 'transition_comment_status', $plugin_admin, 'comment_status', 10, 3 );
+        $this->loader->add_action( 'wp_insert_comment', $this->plugin_admin, 'new_comment', 10, 2 );
+        $this->loader->add_action( 'edit_comment', $this->plugin_admin, 'edit_comment', 10, 2 );
+        $this->loader->add_action( 'transition_comment_status', $this->plugin_admin, 'comment_status', 10, 3 );
 
         // Contact From 7 email send
-        $this->loader->add_action( 'wpcf7_before_send_mail', $plugin_admin, 'wpcf7_before_send_mail' );
+        $this->loader->add_action( 'wpcf7_before_send_mail', $this->plugin_admin, 'wpcf7_before_send_mail' );
 
         // Hook for other plugins and themes to send messages and access plugin functions
-        $this->loader->add_action( 'shutdown', $plugin_admin, 'do_actions', 999, 1 );
-        $this->loader->add_action( 'shutdown', $plugin_admin, 'send_messages_hook', 999, 1 );
+        $this->loader->add_action( 'shutdown', $this->plugin_admin, 'do_actions', 999, 1 );
+        $this->loader->add_action( 'shutdown', $this->plugin_admin, 'send_messages_hook', 999, 1 );
 
 	}
 

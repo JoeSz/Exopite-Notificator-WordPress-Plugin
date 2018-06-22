@@ -134,16 +134,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-exopite-notificator.php';
 /**
  * Begins execution of the plugin.
  *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
+ * Allow other plugins or themes to use Exopite Notificator class methodes.
  *
  * @since    1.0.0
  */
-function run_exopite_notificator() {
-
-	$plugin = new Exopite_Notificator( EXOPITE_NOTIFICATOR_PLUGIN_NAME );
-	$plugin->run();
-
-}
-run_exopite_notificator();
+global $exopite_notificator;
+$exopite_notificator = new Exopite_Notificator( EXOPITE_NOTIFICATOR_PLUGIN_NAME );
+$exopite_notificator->run();
