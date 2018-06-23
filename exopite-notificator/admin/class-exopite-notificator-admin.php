@@ -822,6 +822,7 @@ class Exopite_Notificator_Admin {
     public function write_log( $type, $log_line ) {
 
         $fn = EXOPITE_NOTIFICATOR_PLUGIN_DIR . 'logs/' . $type . '-' . $this->hash . '.log';
+        if ( ! file_exists( $fn ) ) $file_size = 0;
         $file_size = filesize( $fn );
 
         // If log file is bigger then 1MB, rename it to backup.log and start new log,
