@@ -315,30 +315,6 @@ class Exopite_Notificator_Admin {
             ),
         );
 
-        /**
-         * SMS Gateways
-         * - nexmo
-         * - sms77
-         * - twilio
-         * - https://gatewayapi.com
-         * - https://www.clickatell.com
-         * Chat Apps (Maybe, not all)
-         * - line (https://developers.line.me/en/docs/messaging-api/overview/)
-         * - skype (https://github.com/radutopala/skype-bot-php, https://dev.skype.com/bots)
-         * - kik (https://botsupport.kik.com/hc/en-us/articles/225603567-How-much-does-it-cost-to-make-a-bot-)
-         * - Threema (https://gateway.threema.ch/en/developer/api)
-         * - Facebook (https://github.com/RoySegall/facebook-messenger-send-api, https://developers.facebook.com/docs/messenger-platform/reference/send-api)
-         * - wechat (http://admin.wechat.com/wiki/index.php?title=Customer_Service_Messages)
-         *
-         * NOT:
-         * - viber (not working)
-         * - google hangout etc -> cloud api
-         * - tango (no official API)
-         * - whatsapp (no official API)
-         * - kakaotalk (closed API)
-         * - BBM  (no official API yet, will be ever?)
-         */
-
         // Add plugin options
         $fields[] = array(
             'name'   => 'general',

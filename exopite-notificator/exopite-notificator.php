@@ -55,6 +55,32 @@
  * https://api.telegram.org/botXXXXXXX:YOURTOKEN/getUpdates
  * https://api.telegram.org/botXXXXXXX:YOURTOKEN/sendMessage?chat_id=CHATID&text="Hello from Bot"
  */
+/**
+ * SMS Gateways
+ * - nexmo
+ * - sms77
+ * - twilio
+ * - https://gatewayapi.com
+ * - https://www.clickatell.com
+ * Chat Apps (Maybe, not all)
+ * - line (https://developers.line.me/en/docs/messaging-api/overview/)
+ * - skype (https://github.com/radutopala/skype-bot-php, https://dev.skype.com/bots)
+ * - kik (https://botsupport.kik.com/hc/en-us/articles/225603567-How-much-does-it-cost-to-make-a-bot-)
+ *       (https://github.com/pimax/kik-bot-php)
+ * - Threema (https://gateway.threema.ch/en/developer/api)
+ * - Facebook (https://github.com/RoySegall/facebook-messenger-send-api, https://developers.facebook.com/docs/messenger-platform/reference/send-api)
+ * - wechat (http://admin.wechat.com/wiki/index.php?title=Customer_Service_Messages)
+ *          (https://github.com/garbetjie/wechat-php)
+ * - slack (https://api.slack.com/incoming-webhooks)
+ *
+ * NOT:
+ * - viber (not working)
+ * - google hangout etc -> cloud api
+ * - tango (no official API)
+ * - whatsapp (no official API)
+ * - kakaotalk (closed API)
+ * - BBM  (no official API yet, will be ever?)
+ */
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -94,7 +120,7 @@ function deactivate_exopite_notificator() {
 register_activation_hook( __FILE__, 'activate_exopite_notificator' );
 register_deactivation_hook( __FILE__, 'deactivate_exopite_notificator' );
 
-/*
+/**
  * Update
  */
 if ( is_admin() ) {
