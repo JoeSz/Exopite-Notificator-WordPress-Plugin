@@ -847,7 +847,7 @@ class Exopite_Notificator_Admin {
      */
     public function send_message_telegram( $item, $message ) {
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         // If no recipient definied, then try default one
         if ( empty( $item['telegram_recipients'] ) ) $item['telegram_recipients'] = $options['telegram_default_channel'];
@@ -865,12 +865,16 @@ class Exopite_Notificator_Admin {
 
         do_action( 'exopite-notificator-telegram-before-send', $item, $message, $options );
 
-        foreach ( $telegram_channels as $telegram_channel ) {
+        if ( isset( $options['telegram_token'] ) && ! empty( $options['telegram_token'] ) ) {
 
-            $notifcaster = new Notifcaster_Class();
-            $notifcaster->_telegram( apply_filters( 'exopite-notificator-telegram-token', $options['telegram_token'], $item, $message ) );
+            foreach ( $telegram_channels as $telegram_channel ) {
 
-            $sentResult = $notifcaster->channel_text( $telegram_channel, $message );
+                $notifcaster = new Notifcaster_Class();
+                $notifcaster->_telegram( apply_filters( 'exopite-notificator-telegram-token', $options['telegram_token'], $item, $message ) );
+
+                $sentResult = $notifcaster->channel_text( $telegram_channel, $message );
+
+            }
 
         }
 
@@ -1025,6 +1029,7 @@ class Exopite_Notificator_Admin {
      *         'type'                => 'telegram',
      *         'message'             => 'test message',
      *         'telegram_recipients' => 'TELEGRAM_CHAT_ID',
+     *         'alert-type'          => 'Type of the alert',
      *     );
      *
      *     $messages[] = array(
@@ -1049,11 +1054,12 @@ class Exopite_Notificator_Admin {
                 $item = array();
                 // comma separats list
                 $item[$message['type'] . '_recipients'] = $message[$message['type'] . '_recipients'];
-                $item['email_type'] = $message['email_subject'];
-                $item['email_smtp_override'] = $message['email_smtp_override'];
-                $item['email_disable_bloginfo'] = $message['email_disable_bloginfo'];
+                $item['email_type'] = ( isset( $message['email_subject'] ) ) ? $message['email_subject'] : '';
+                $item['email_smtp_override'] = ( isset( $message['email_subject'] ) ) ? $message['email_smtp_override'] : '';
+                $item['email_disable_bloginfo'] = ( isset( $message['email_subject'] ) ) ? $message['email_disable_bloginfo'] : '';
                 // Get default fields
                 $template_fields = $this->get_template_fields();
+                $template_fields['alert-type'] =  ( isset( $message['alert-type'] ) ) ? $message['alert-type'] : '';
                 call_user_func_array( array( $this, 'send_message_' . $message['type'] ), array( $item, $this->generate_template( $template_fields, $message['message'] ) ) );
             }
         }
@@ -1146,7 +1152,9 @@ class Exopite_Notificator_Admin {
 
         $actions = $this->get_all_actions();
 
-        $template_fields['alert-type'] = $actions[$template_fields['alert-type']];
+        if ( ( isset( $actions[$template_fields['alert-type']] ) ) ) {
+            $template_fields['alert-type'] = $actions[$template_fields['alert-type']];
+        }
 
         foreach ( $template_fields as $name => $value ) {
             $template = str_replace(
