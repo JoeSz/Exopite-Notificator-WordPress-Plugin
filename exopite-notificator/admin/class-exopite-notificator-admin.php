@@ -57,7 +57,7 @@ class Exopite_Notificator_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
         $this->hash = $options['_hash'];
         $this->log = ( isset( $options['log'] ) && $options['log'] == 'yes' );
         $this->send_types = array( 'email', 'telegram' );
@@ -105,7 +105,7 @@ class Exopite_Notificator_Admin {
         $config = array(
 
             'type'              => 'menu',                          // Required, menu or metabox
-            'id'                => $this->plugin_name,              // Required, meta box id, unique per page, to save: get_option( id )
+            'id'                => $this->plugin_name,              // Required, meta box id, unique per page, to save: get_exopite_sof_option( id )
             'menu'              => 'plugins.php',                   // Required, sub page to your options page
             'submenu'           => true,                            // Required for submenu
             'title'             => 'Exopite Notificator',            //The name of this page
@@ -620,7 +620,7 @@ class Exopite_Notificator_Admin {
             ),
         );
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         $options_panel = new Exopite_Simple_Options_Framework( $config, $fields );
         if ( ! isset( $options['metabox'] ) || $options['metabox'] == 'yes' ) $options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fields_metabox );
@@ -888,7 +888,7 @@ class Exopite_Notificator_Admin {
             include_once( ABSPATH . WPINC . '/class-phpmailer.php' );
         }
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         $mail = new PHPMailer();
         if ( $options['smtp_html'] == 'yes' ) {
@@ -1201,7 +1201,7 @@ class Exopite_Notificator_Admin {
     // Loop plugin options group fields (later can be add more norification platform like viber, etc...)
     public function loop_options( $callback, $args = array() ) {
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         // Loop all options
         foreach ( $options as $key => $option ) {
@@ -1312,7 +1312,7 @@ class Exopite_Notificator_Admin {
 
         if ( ! empty( $username ) && ! empty( $password ) ) {
 
-            $options = get_option( $this->plugin_name );
+            $options = get_exopite_sof_option( $this->plugin_name );
 
             // Check username type, string or email
             if ( filter_var( $username, FILTER_VALIDATE_EMAIL ) ) {
@@ -1653,7 +1653,7 @@ class Exopite_Notificator_Admin {
 
         $active_options = true;
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         if ( $this->log ) $this->write_log( 'post-page-saved_metabox', var_export( $options['metabox'], true ) );
 
@@ -1725,7 +1725,7 @@ class Exopite_Notificator_Admin {
 
         $active_options = true;
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         if ( ! isset( $options['metabox'] ) || $options['metabox'] == 'yes' ) {
 
@@ -1856,7 +1856,7 @@ class Exopite_Notificator_Admin {
         // POST META
         $active_options = true;
 
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         if ( ! isset( $options['metabox'] ) || $options['metabox'] == 'yes' ) {
 
