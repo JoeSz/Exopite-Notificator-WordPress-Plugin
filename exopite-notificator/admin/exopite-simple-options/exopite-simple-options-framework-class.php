@@ -1706,7 +1706,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			if ( class_exists( $class ) ) {
 
-				if ( empty( $value ) ) {
+				if ( empty( $value ) && $value !== 0 && $value !== '0' ) {
 
 					// NEW
 
@@ -1802,7 +1802,20 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			}
 
-			return $value;
+			/**
+			 * Use this filter, like:
+			 *
+			 * add_filter( 'exopite_sof_field_value', 'prefix_exopite_sof_field_value', 10, 5 );
+			 * public function prefix_exopite_sof_field_value( $value, $unique, $options, $field ) {
+			 *
+			 *	   if ( $unique == $this->plugin_name && $field['id'] == 'your-field-id' ) {
+			 *		   // do the magic ;)
+			 *	   }
+			 *
+			 *	   return $value;
+			 * }
+			 */
+			return apply_filters( 'exopite_sof_field_value', $value, $this->unique, $options, $field );
 
 		}
 
