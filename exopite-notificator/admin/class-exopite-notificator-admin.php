@@ -58,6 +58,10 @@ class Exopite_Notificator_Admin {
 		$this->version = $version;
 
         $options = get_exopite_sof_option( $this->plugin_name );
+        if ( ! isset( $options['_hash'] ) ) {
+            $options['_hash'] = md5( uniqid( rand(), true ) );
+            update_option( $plugin_name, $options );
+        }
         $this->hash = $options['_hash'];
         $this->log = ( isset( $options['log'] ) && $options['log'] == 'yes' );
         $this->send_types = array( 'email', 'telegram' );
