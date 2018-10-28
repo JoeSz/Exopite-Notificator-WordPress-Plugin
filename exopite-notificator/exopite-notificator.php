@@ -86,8 +86,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// define( 'EXOPITE_NOTIFICATOR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
@@ -152,7 +150,7 @@ if ( is_admin() ) {
      * add plugin upgrade notification
      * https://andidittrich.de/2015/05/howto-upgrade-notice-for-wordpress-plugins.html
      */
-    add_action( 'in_plugin_update_message-' . PLUGIN_NAME_PLUGIN_NAME . '/' . PLUGIN_NAME_PLUGIN_NAME .'.php', 'exopite_notificator_show_upgrade_notification', 10, 2 );
+    add_action( 'in_plugin_update_message-' . EXOPITE_NOTIFICATOR_PLUGIN_NAME . DIRECTORY_SEPARATOR . EXOPITE_NOTIFICATOR_PLUGIN_NAME .'.php', 'exopite_notificator_show_upgrade_notification', 10, 2 );
     function exopite_notificator_show_upgrade_notification( $current_plugin_metadata, $new_plugin_metadata ) {
 
         /**
