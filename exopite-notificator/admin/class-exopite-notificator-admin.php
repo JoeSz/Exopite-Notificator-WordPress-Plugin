@@ -808,11 +808,16 @@ class Exopite_Notificator_Admin {
         $email_recipients_additional = array( 'email_recipients_additional', 'post_email_recipients_additional', 'comment_email_recipients_additional' );
         $to_extra = array();
         foreach ( $email_recipients_additional as $email_recipient_additional ) {
-            $to_additional = apply_filters( $email_recipient_additional, $item[$email_recipient_additional], $item, $message );
+            if ( isset( $item[$email_recipient_additional] ) ) {
 
-            if ( isset( $to_additional ) && ! empty( $to_additional ) ) {
-                $to_extra = explode( ',', preg_replace( '/\s+/', '', $to_additional ) );
+                $to_additional = apply_filters( $email_recipient_additional, $item[$email_recipient_additional], $item, $message );
+
+                if ( isset( $to_additional ) && ! empty( $to_additional ) ) {
+                    $to_extra = explode( ',', preg_replace( '/\s+/', '', $to_additional ) );
+                }
+
             }
+
         }
 
         $to = array_filter( array_merge( $to, $to_extra ) );
