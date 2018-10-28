@@ -662,17 +662,41 @@ class Exopite_Notificator_Admin {
 
     }
 
+    public function check_or_create_log_folter( $log_dir ) {
+
+        if ( ! file_exists( $log_dir ) ) {
+            mkdir( $log_dir, 0777, true );
+        }
+
+    }
+
+    public function manage_log_size( $fn, $log_dir ) {
+
+        if ( ! file_exists( $fn ) ) {
+            $file_size = 0;
+        } else {
+            $file_size = filesize( $fn );
+        }
+
+        /**
+         * If log file is bigger then 1MB, rename it to backup.log and start new log,
+         * in this case we have max 2MB log file per type.
+         */
+        if ( $file_size > 1000000 ) {
+            rename( $fn, $log_dir . DIRECTORY_SEPARATOR . $type . '-' . $this->hash . '.backup.log' );
+        }
+
+    }
+
     public function write_log( $type, $log_line ) {
 
-        $fn = EXOPITE_NOTIFICATOR_PLUGIN_DIR . 'logs/' . $type . '-' . $this->hash . '.log';
-        if ( ! file_exists( $fn ) ) $file_size = 0;
-        $file_size = filesize( $fn );
+        $log_dir = EXOPITE_NOTIFICATOR_PATH . 'logs';
+        $fn = $log_dir . DIRECTORY_SEPARATOR . $type . '-' . $this->hash . '.log';
 
-        // If log file is bigger then 1MB, rename it to backup.log and start new log,
-        // in this case we have max 2MB log file per type.
-        if ( $file_size > 1000000 ) {
-            rename( $fn, EXOPITE_NOTIFICATOR_PLUGIN_DIR . 'logs/' . $type . '-' . $this->hash . '.backup.log' );
-        }
+        $this->check_or_create_log_folter( $log_dir );
+
+        $this->manage_log_size( $fn, $log_dir );
+
         $log_in_file = file_put_contents( $fn, date('Y-m-d H:i:s') . ' - ' . $log_line . PHP_EOL, FILE_APPEND );
 
     }
@@ -842,7 +866,11 @@ class Exopite_Notificator_Admin {
 
         do_action( 'exopite-notificator-email-before-send', $item, $message, $to, $subject, $body, $header );
 
-        if ( $item['email_smtp_override'] == 'yes' || $item['post_email_smtp_override'] == 'yes' || $item['comment_email_smtp_override'] == 'yes' ) {
+        if (
+                ( isset( $item['email_smtp_override'] ) && $item['email_smtp_override'] == 'yes' ) ||
+                ( isset( $item['post_email_smtp_override'] ) && $item['post_email_smtp_override'] == 'yes' ) ||
+                ( isset( $item['comment_email_smtp_override'] ) && $item['comment_email_smtp_override'] == 'yes' )
+            ) {
 
             $ret =  $this->send_mail( $to, $subject, $body );
 
