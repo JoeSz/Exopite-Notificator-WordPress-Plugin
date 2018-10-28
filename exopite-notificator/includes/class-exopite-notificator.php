@@ -135,6 +135,18 @@ class Exopite_Notificator {
 		 */
 		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-exopite-notificator-public.php';
 
+		/**
+		* Exopite Client Detector.
+		*
+		* Detect client:
+		* - real IP address
+		* - browser
+		* - os
+		* - real user agent
+		* - platform [mobile, tablet, desktop]
+		*/
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendors/class-exopite-client-detector.php';
+
         /**
          * Exopite Simple Options Framework
          *
