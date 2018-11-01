@@ -3,10 +3,10 @@
 
 - Author: Joe Szalai
 - Version: 20180622
-- Plugin URL: https://joe.szalai.org/exopite/exopite-notificator/
-- Demo URL: https://joe.szalai.org/exopite/exopite-notificator/
+- Plugin URL: https://www.joeszalai.org/exopite/exopite-notificator/
+- Demo URL: https://www.joeszalai.org/exopite/exopite-notificator/
 - Theme GitHub URL: https://github.com/JoeSz/Exopite-Notificator
-- Author URL: https://joe.szalai.org/
+- Author URL: https://www.joeszalai.org/
 - License: GNU General Public License v3 or later
 - License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
