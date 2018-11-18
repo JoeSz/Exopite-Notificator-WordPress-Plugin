@@ -197,9 +197,10 @@ class Exopite_Notificator_Admin {
                     'id'             => 'post_email_recipients',
                     'type'           => 'select',
                     'title'          => 'E-Mail Recipients',
-                    'options'        => 'callback',
-                    'query_args'     => array(
+                    'query'          => array(
+                        'type'          => 'callback',
                         'function'      => array( $this, 'get_all_emails' ),
+                        'args'          => array() // WordPress query args
                     ),
                     'attributes' => array(
                         'multiple' => 'multiple',
@@ -272,9 +273,10 @@ class Exopite_Notificator_Admin {
                     'id'             => 'comment_email_recipients',
                     'type'           => 'select',
                     'title'          => 'E-Mail Recipients',
-                    'options'        => 'callback',
-                    'query_args'     => array(
+                    'query'          => array(
+                        'type'          => 'callback',
                         'function'      => array( $this, 'get_all_emails' ),
+                        'args'          => array() // WordPress query args
                     ),
                     'attributes' => array(
                         'multiple' => 'multiple',
@@ -492,9 +494,10 @@ class Exopite_Notificator_Admin {
                             'id'             => 'email_type',
                             'type'           => 'select',
                             'title'          => 'Type',
-                            'options'        => 'callback',
-                            'query_args'     => array(
+                            'query'          => array(
+                                'type'          => 'callback',
                                 'function'      => array( $this, 'get_all_actions' ),
+                                'args'          => array() // WordPress query args
                             ),
                             'attributes' => array(
                                 'style'    => 'width: 200px; height: 56px;',
@@ -507,9 +510,10 @@ class Exopite_Notificator_Admin {
                             'id'             => 'email_recipients',
                             'type'           => 'select',
                             'title'          => 'Recipients',
-                            'options'        => 'callback',
-                            'query_args'     => array(
+                            'query'          => array(
+                                'type'          => 'callback',
                                 'function'      => array( $this, 'get_all_emails' ),
+                                'args'          => array() // WordPress query args
                             ),
                             'attributes' => array(
                                 'multiple' => 'multiple',
@@ -590,9 +594,10 @@ class Exopite_Notificator_Admin {
                             'id'             => 'telegram_type',
                             'type'           => 'select',
                             'title'          => 'Type',
-                            'options'        => 'callback',
-                            'query_args'     => array(
+                            'query'          => array(
+                                'type'          => 'callback',
                                 'function'      => array( $this, 'get_all_actions' ),
+                                'args'          => array() // WordPress query args
                             ),
                             'attributes' => array(
                                 'style'    => 'width: 200px; height: 56px;',
@@ -1113,10 +1118,6 @@ class Exopite_Notificator_Admin {
 
         // Add alert type to template fields
         $template_fields['alert-type'] = $item[$key . '_type'];
-
-        // if ( $this->log ) $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'item: ' . var_export( $item, true ) );
-        // if ( $this->log ) $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'template_fields: ' . var_export( $template_fields, true ) );
-        // if ( $this->log ) $this->write_log( '_'.$key.'_group__' . $item[$key . '_type'], 'template: ' . $this->generate_template( $template_fields, $item[$key . '_template'] ) );
 
         // Run callback functions (send_message_email; send_message_telegram; maybe more later)
         call_user_func_array( array( $this, 'send_message_' . $key ), array( $item, $this->generate_template( $template_fields, $item[$key . '_template'] ) ) );

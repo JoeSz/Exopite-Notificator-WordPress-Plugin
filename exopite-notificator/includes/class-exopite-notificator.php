@@ -194,7 +194,7 @@ class Exopite_Notificator {
 	private function define_admin_hooks() {
 
         // Check if md5 exist
-        $options = get_option( $this->plugin_name );
+        $options = get_exopite_sof_option( $this->plugin_name );
 
         if ( ! $options ) {
             $options = array();
