@@ -2,7 +2,7 @@
 ## WordPress Plugin
 
 - Author: Joe Szalai
-- Version: 20180622
+- Version: 20181123
 - Plugin URL: https://www.joeszalai.org/exopite/exopite-notificator/
 - Demo URL: https://www.joeszalai.org/exopite/exopite-notificator/
 - Theme GitHub URL: https://github.com/JoeSz/Exopite-Notificator
@@ -157,9 +157,14 @@ OR
 
 ## Changelog
 
+##### 20181123
+* Update Exopite Simple Options Framework.
+* Add 'Exopite Client Detector' class to handle client detection.
+* Various bugfixes.
+
 ##### 20180622
 * Allow other plugins or themes to use Exopite Notificator class methodes.
-* Add hooks to allow other plugins or themes to send notifications
+* Add hooks to allow other plugins or themes to send notifications.
 
 ##### 20180608
 * Add SMTP override for emails. You can override all possibilities individually, but you can add only one SMTP account.

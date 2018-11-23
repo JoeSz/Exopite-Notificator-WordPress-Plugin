@@ -6,7 +6,7 @@ Requires at least: 4.7
 Tested up to: 4.9.6
 Stable tag: 4.9.6
 License: GPLv3 or later
-Version: 20180622
+Version: 20181123
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Notify by emails or Telegram chats messages on selected actions.
@@ -148,6 +148,11 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 2. This is the second screen shot
 
 == Changelog ==
+
+= 20181123 =
+* Update Exopite Simple Options Framework.
+* Add 'Exopite Client Detector' class to handle client detection.
+* Various bugfixes.
 
 = 20180622 =
 * Allow other plugins or themes to use Exopite Notificator class methodes.

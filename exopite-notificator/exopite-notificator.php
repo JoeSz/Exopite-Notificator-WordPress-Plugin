@@ -16,7 +16,7 @@
  * Plugin Name:       Exopite Notificator
  * Plugin URI:        https://joe.szalai.org/exopite/exopite-notificator
  * Description:       Notify by emails or Telegram chats on selected actions. This plugin is created for security reason, more presiecly for information about potentially dangerous activities.
- * Version:           20180622
+ * Version:           20181123
  * Author:            Joe Szalai
  * Author URI:        https://joe.szalai.org
  * License:           GPL-2.0+
@@ -91,7 +91,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'EXOPITE_NOTIFICATOR_VERSION', '20181026' );
+define( 'EXOPITE_NOTIFICATOR_VERSION', '20181123' );
 define( 'EXOPITE_NOTIFICATOR_PLUGIN_NAME', 'exopite-notificator' );
 define( 'EXOPITE_NOTIFICATOR_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -141,7 +141,7 @@ if ( is_admin() ) {
     }
 
     $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-        'https://update.szalai.org/?action=get_metadata&slug=' . EXOPITE_NOTIFICATOR_PLUGIN_NAME, //Metadata URL.
+        'https://update.joeszalai.org/?action=get_metadata&slug=' . EXOPITE_NOTIFICATOR_PLUGIN_NAME, //Metadata URL.
         __FILE__, //Full path to the main plugin file.
         EXOPITE_NOTIFICATOR_PLUGIN_NAME //Plugin slug. Usually it's the same as the name of the directory.
     );
