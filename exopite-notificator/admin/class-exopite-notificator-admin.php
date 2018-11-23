@@ -197,11 +197,15 @@ class Exopite_Notificator_Admin {
                     'id'             => 'post_email_recipients',
                     'type'           => 'select',
                     'title'          => 'E-Mail Recipients',
+                    // 'options'        => 'callback',
                     'query'          => array(
                         'type'          => 'callback',
                         'function'      => array( $this, 'get_all_emails' ),
                         'args'          => array() // WordPress query args
                     ),
+                    // 'query_args'     => array(
+                    //     'function'      => array( $this, 'get_all_emails' ),
+                    // ),
                     'attributes' => array(
                         'multiple' => 'multiple',
                         'style'    => 'width: 200px; height: 56px;',
@@ -273,11 +277,15 @@ class Exopite_Notificator_Admin {
                     'id'             => 'comment_email_recipients',
                     'type'           => 'select',
                     'title'          => 'E-Mail Recipients',
+                    // 'options'        => 'callback',
                     'query'          => array(
                         'type'          => 'callback',
                         'function'      => array( $this, 'get_all_emails' ),
                         'args'          => array() // WordPress query args
                     ),
+                    // 'query_args'     => array(
+                    //     'function'      => array( $this, 'get_all_emails' ),
+                    // ),
                     'attributes' => array(
                         'multiple' => 'multiple',
                         'style'    => 'width: 200px; height: 56px;',
@@ -494,11 +502,15 @@ class Exopite_Notificator_Admin {
                             'id'             => 'email_type',
                             'type'           => 'select',
                             'title'          => 'Type',
+                            // 'options'        => 'callback',
                             'query'          => array(
                                 'type'          => 'callback',
                                 'function'      => array( $this, 'get_all_actions' ),
                                 'args'          => array() // WordPress query args
                             ),
+                            // 'query_args'     => array(
+                            //     'function'      => array( $this, 'get_all_actions' ),
+                            // ),
                             'attributes' => array(
                                 'style'    => 'width: 200px; height: 56px;',
                             ),
@@ -510,11 +522,15 @@ class Exopite_Notificator_Admin {
                             'id'             => 'email_recipients',
                             'type'           => 'select',
                             'title'          => 'Recipients',
+                            // 'options'        => 'callback',
                             'query'          => array(
                                 'type'          => 'callback',
                                 'function'      => array( $this, 'get_all_emails' ),
                                 'args'          => array() // WordPress query args
                             ),
+                            // 'query_args'     => array(
+                            //     'function'      => array( $this, 'get_all_emails' ),
+                            // ),
                             'attributes' => array(
                                 'multiple' => 'multiple',
                                 'style'    => 'width: 200px; height: 56px;',
@@ -599,6 +615,10 @@ class Exopite_Notificator_Admin {
                                 'function'      => array( $this, 'get_all_actions' ),
                                 'args'          => array() // WordPress query args
                             ),
+                            // 'options'        => 'callback',
+                            // 'query_args'     => array(
+                            //     'function'      => array( $this, 'get_all_actions' ),
+                            // ),
                             'attributes' => array(
                                 'style'    => 'width: 200px; height: 56px;',
                             ),
