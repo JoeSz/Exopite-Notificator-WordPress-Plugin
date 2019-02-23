@@ -926,6 +926,7 @@ class Exopite_Notificator_Admin {
      *
      * add_filter( 'exopite-notificator-send-messages', array( $this, 'send_notification' ), 10, 1 );
      * public function send_notification( $messages ) {
+     *
      *     $messages[] = array(
      *         'type'                => 'telegram',
      *         'message'             => 'test message',
@@ -934,7 +935,7 @@ class Exopite_Notificator_Admin {
      *     );
      *
      *     $messages[] = array(
-     *         'type' => 'email',
+     *         'type'                   => 'email',
      *         'message'                => 'This is the message at {{datetime}} from {{user-ip}}',
      *         'email_recipients'       => 'e@mail.to',
      *         'email_subject'          => 'Email subject',
@@ -945,6 +946,30 @@ class Exopite_Notificator_Admin {
      *     return $messages;
      *
      * }
+     *
+     * == OR ==
+     *
+     * add_filter( 'exopite-notificator-send-messages', function( $messages ) use ( $my_message_items ) {
+     *
+     *     $messages[] = array(
+     *         'type'                => 'telegram',
+     *         'message'             => 'test message',
+     *         'telegram_recipients' => 'TELEGRAM_CHAT_ID',
+     *         'alert-type'          => 'Type of the alert',
+     *     );
+     *
+     *     $messages[] = array(
+     *         'type'                   => 'email',
+     *         'message'                => 'This is the message at {{datetime}} from {{user-ip}}',
+     *         'email_recipients'       => 'e@mail.to',
+     *         'email_subject'          => 'Email subject',
+     *         'email_smtp_override'    => 'yes',
+     *         'email_disable_bloginfo' => 'yes',
+     *     );
+     *
+     *     return $messages;
+     *
+     * }, 10, 1 );
      */
     public function send_messages_hook() {
 
@@ -953,11 +978,11 @@ class Exopite_Notificator_Admin {
         if ( ! empty( $messages ) && is_array( $messages ) ) {
             foreach ( $messages as $message ) {
                 $item = array();
+                $item['email_subject'] = ( isset( $message['email_subject'] ) ) ? $message['email_subject'] : '';
+                $item['email_smtp_override'] = ( isset( $message['email_smtp_override'] ) ) ? $message['email_smtp_override'] : '';
+                $item['email_disable_bloginfo'] = ( isset( $message['email_subject'] ) ) ? $message['email_disable_bloginfo'] : '';
                 // comma separats list
                 $item[$message['type'] . '_recipients'] = $message[$message['type'] . '_recipients'];
-                $item['email_type'] = ( isset( $message['email_subject'] ) ) ? $message['email_subject'] : '';
-                $item['email_smtp_override'] = ( isset( $message['email_subject'] ) ) ? $message['email_smtp_override'] : '';
-                $item['email_disable_bloginfo'] = ( isset( $message['email_subject'] ) ) ? $message['email_disable_bloginfo'] : '';
                 // Get default fields
                 $template_fields = $this->get_template_fields();
                 $template_fields['alert-type'] =  ( isset( $message['alert-type'] ) ) ? $message['alert-type'] : '';
