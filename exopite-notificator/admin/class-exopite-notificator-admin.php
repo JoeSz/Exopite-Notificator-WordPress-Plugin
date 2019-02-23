@@ -835,6 +835,8 @@ class Exopite_Notificator_Admin {
 
     public function send_message_email( $item, $message ) {
 
+        $options = get_exopite_sof_option( $this->plugin_name );
+
         // write the email content
         $header = "MIME-Version: 1.0\n";
         $header .= "Content-Type: text/html; charset=utf-8\n";
@@ -891,10 +893,15 @@ class Exopite_Notificator_Admin {
 
         do_action( 'exopite-notificator-email-before-send', $item, $message, $to, $subject, $body, $header );
 
-        if (
+        if  (
                 ( isset( $item['email_smtp_override'] ) && $item['email_smtp_override'] == 'yes' ) ||
                 ( isset( $item['post_email_smtp_override'] ) && $item['post_email_smtp_override'] == 'yes' ) ||
-                ( isset( $item['comment_email_smtp_override'] ) && $item['comment_email_smtp_override'] == 'yes' )
+                ( isset( $item['comment_email_smtp_override'] ) && $item['comment_email_smtp_override'] == 'yes' ) ||
+                ( isset( $item['email_smtp_override'] ) &&
+                  $item['email_smtp_override'] == 'maybe' &&
+                  isset( $options['smtp_host'] ) &&
+                  ! empty( $options['smtp_host'] )
+                )
             ) {
 
             $ret =  $this->send_mail( $to, $subject, $body );
@@ -978,7 +985,7 @@ class Exopite_Notificator_Admin {
         if ( ! empty( $messages ) && is_array( $messages ) ) {
             foreach ( $messages as $message ) {
                 $item = array();
-                $item['email_subject'] = ( isset( $message['email_subject'] ) ) ? $message['email_subject'] : '';
+                $item['email_type'] = ( isset( $message['email_subject'] ) ) ? $message['email_subject'] : '';
                 $item['email_smtp_override'] = ( isset( $message['email_smtp_override'] ) ) ? $message['email_smtp_override'] : '';
                 $item['email_disable_bloginfo'] = ( isset( $message['email_subject'] ) ) ? $message['email_disable_bloginfo'] : '';
                 // comma separats list
