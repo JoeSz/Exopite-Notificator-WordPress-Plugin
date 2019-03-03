@@ -1,4 +1,15 @@
-/**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
- */
+.block-editor-page #exopite-notificator {
+    box-shadow: none;
+}
+.block-editor-page #exopite-notificator .hndle.ui-sortable-handle {
+    border-color: #eee;
+    border-top-width: 1px;
+    border-style: solid;
+    border-left-width: 1px;
+    border-right-width: 1px;
+}
+.block-editor-page #exopite-notificator .inside {
+    padding: 0;
+    margin: 0;
+    border-right: 1px solid #eee;
+}
