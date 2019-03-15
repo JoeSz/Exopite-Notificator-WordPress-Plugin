@@ -26,7 +26,7 @@
  * - content
  * - date
  * - editor
- * - group
+ * - group/accordion item
  * - hidden
  * - image
  * - image_select
@@ -38,9 +38,11 @@
  * - range
  * - select
  * - switcher
+ * - tab
  * - tap_list
  * - text
  * - textarea
+ * - typography
  * - upload
  * - video mp4/oembed
  */
@@ -103,6 +105,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 *
 		 */
 		public $fields = array();
+		public $elements = array();
 
 		public $is_multilang = null;
 
@@ -114,6 +117,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		public $version;
 
+		// public $debug = true;
 		public $debug = false;
 
 		/**
@@ -124,7 +128,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 *
 		 */
 		public $db_options = array();
-
 
 		/**
 		 * Sets the type to  metabox|menu
@@ -142,7 +145,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 */
 		protected $required_keys_all_types = array();
 
-
 		/**
 		 * @var array required fields for $type = menu
 		 */
@@ -153,8 +155,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 */
 		protected $required_keys_metabox = array( 'id', 'post_types', 'title', 'capability' );
 
-
-		public function __construct( $config, $fields ) {
+		public function __construct( $config, $elements ) {
 
 			// If we are not in admin area exit.
 			if ( ! is_admin() ) {
@@ -167,14 +168,16 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			$this->unique = $config['id'];
 
 			// Filter for override every exopite $config and $fields
-			$this->config = apply_filters( 'exopite_sof_config', $config );
-			$this->fields = apply_filters( 'exopite_sof_options', $fields );
+			// $this->config = apply_filters( 'exopite_sof_config', $config );
+			// $this->elements = apply_filters( 'exopite_sof_options', $fields );
 
 			// Filter for override $config and $fields with respect to $config and $fields
 			$this->config = apply_filters( 'exopite_sof_config_' . $this->unique, $config );
-			$this->fields = apply_filters( 'exopite_sof_options_' . $this->unique, $fields );
+			$this->elements = apply_filters( 'exopite_sof_options_' . $this->unique, $elements );
 
 			// now is_menu() and is_metabox() available
+
+			$this->get_fields();
 
 			$this->check_required_configuration_keys();
 
@@ -208,7 +211,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				$this->languages    = $this->multilang['languages'];
 
 			}
-
 
 		}
 
@@ -1431,6 +1433,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 					// no break
 				case 'select':
 					// no break
+				case 'typography':
+					// no break
+				case 'tab':
+					// no break
 				case 'tap_list':
 					/**
 					 * Need to check array values.
@@ -1696,9 +1702,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				$depend .= ' data-' . $sub . 'value="' . $field['dependency'][2] . '"';
 			}
 
-			$output .= '<div class="exopite-sof-field exopite-sof-field-' . $field['type'] . $wrap_class . $hidden . '"' . $depend . '>';
+			if ( ! isset( $field['pseudo'] ) || ! $field['pseudo'] ) {
+				$output .= '<div class="exopite-sof-field exopite-sof-field-' . $field['type'] . $wrap_class . $hidden . '"' . $depend . '>';
+			}
 
-			if ( ! empty( $field['title'] ) ) {
+			if ( isset( $field['title'] ) ) {
 
 				$output .= '<h4 class="exopite-sof-title">';
 
@@ -1768,13 +1776,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			}
 
-			if ( ! empty( $field['title'] ) ) {
+			if ( isset( $field['title'] ) ) {
 				$output .= '</div>';
 			} // exopite-sof-fieldset
 
-			$output .= '<div class="clearfix"></div>';
-
-			$output .= '</div>'; // exopite-sof-field
+			if ( ! isset( $field['pseudo'] ) || ! $field['pseudo'] ) {
+				$output .= '<div class="clearfix"></div>';
+				$output .= '</div>'; // exopite-sof-field
+			}
 
 			do_action( 'exopite_sof_after_generate_field', $field, $this->config );
 
@@ -1846,6 +1855,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			echo '<header class="exopite-sof-header exopite-sof-header-js">';
 			echo '<h1>' . $this->config['title'] . $current_language_title . '</h1>';
 
+			echo '<span class="exopite-sof-search-wrapper"><input type="text" class="exopite-sof-search"></span>';
+
 			echo '<fieldset><span class="exopite-sof-ajax-message"></span>';
 			submit_button( esc_attr__( 'Save Settings', 'exopite-simple-options' ), 'primary ' . 'exopite-sof-submit-button-js', $this->unique . '-save', false, array() );
 			echo '</fieldset>';
@@ -1885,7 +1896,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			if ( isset( $section['title'] ) && ! empty( $section['title'] ) ) {
 
-				echo '<h2 class="exopite-sof-section-header"><span class="dashicons-before ' . $section['icon'] . '"></span>' . $section['title'] . '</h2>';
+				$icon_before = '';
+				if ( strpos( $section['icon'], 'dashicon' ) !== false ) {
+					$icon_before = 'dashicons-before ';
+				} elseif ( strpos( $section['icon'], 'fa' ) !== false ) {
+					$icon_before = 'fa-before ';
+				}
+
+				echo '<h2 class="exopite-sof-section-header" data-section="' . $section['name'] . '"><span class="' . $icon_before . $section['icon'] . '"></span>' . $section['title'] . '</h2>';
 
 			}
 
@@ -1897,6 +1915,151 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		public function display_options_section_footer() {
 
 			echo '</div>'; // exopite-sof-section
+
+		}
+
+		public function get_fields() {
+
+			if ( ! $this->elements ) return;
+
+			$fields = array();
+
+			foreach ( $this->elements as $key => $value ) {
+
+				if( isset( $value['sections'] ) ) {
+
+					foreach ( $value['sections'] as $section ) {
+
+						if( isset( $section['fields'] ) ) {
+							$fields[] = $section;
+						}
+
+					}
+
+				} else {
+
+					if( isset( $value['fields'] ) ) {
+						$fields[] = $value;
+					}
+
+				}
+
+			}
+
+			$this->fields = $fields;
+		}
+
+		public function get_menu_item_icons( $section ) {
+
+			if ( strpos( $section['icon'], 'dashicon' ) !== false ) {
+				echo '<span class="exopite-sof-nav-icon dashicons-before ' . $section['icon'] . '"></span>';
+			} elseif ( strpos( $section['icon'], 'fa' ) !== false ) {
+				echo '<span class="exopite-sof-nav-icon fa-before ' . $section['icon'] . '" aria-hidden="true"></span>';
+			}
+
+		}
+
+		public function get_menu_item( $section, $active = '', $force_hidden ) {
+
+			// $active = '';
+			// if ( $section === reset( $this->fields ) ) {
+			// 	$active = ' active';
+			// }
+
+			$depend = '';
+			$hidden = ( $force_hidden ) ? ' hidden' : '';
+
+			// Dependency for tabs too
+			if ( ! empty( $section['dependency'] ) ) {
+				$hidden = ' hidden';
+				$depend = ' data-controller="' . $section['dependency'][0] . '"';
+				$depend .= ' data-condition="' . $section['dependency'][1] . '"';
+				$depend .= ' data-value="' . $section['dependency'][2] . '"';
+			}
+
+			echo '<li  class="exopite-sof-nav-list-item' . $active . $hidden . '"' . $depend . ' data-section="' . $section['name'] . '">';
+			echo '<span class="exopite-sof-nav-list-item-title">';
+			$this->get_menu_item_icons( $section );
+			echo $section['title'];
+			echo '</span>';
+			echo '</li>';
+
+		}
+
+		public function get_menu() {
+
+			// $fields = array();
+
+			echo '<div class="exopite-sof-nav"><ul class="exopite-sof-nav-list">';
+
+			foreach ( $this->elements as $key => $value ) {
+
+				$active = '';
+				reset( $this->elements );
+				if ( $key === key($this->elements ) ) {
+					$active = ' active';
+				}
+
+
+				if( isset( $value['sections'] ) ) {
+
+					echo '<li  class="exopite-sof-nav-list-parent-item' . $active . '">';
+					echo '<span class="exopite-sof-nav-list-item-title">';
+					$this->get_menu_item_icons( $value );
+					echo $value['title'];
+					echo '</span>';
+					echo '<ul style="display:none;">';
+
+					foreach ( $value['sections'] as $section ) {
+
+						if( isset( $section['fields'] ) ) {
+
+							$this->get_menu_item( $section, $active, false );
+
+						}
+
+					}
+
+					echo '</ul>';
+					echo '</li>';
+
+				} else {
+
+					if( isset( $value['fields'] ) ) {
+
+						$this->get_menu_item( $value, $active, false );
+
+					}
+
+				}
+
+			}
+
+			echo '</ul></div>';
+
+		}
+
+		public function display_debug_infos() {
+
+			echo '<pre>MULTILANG<br>';
+			var_export( $this->config['multilang'] );
+			echo '</pre>';
+
+			echo '<pre>IS_SIMPLE:<br>';
+			var_export( $this->is_options_simple() );
+			echo '</pre>';
+
+			echo '<pre>IS_MULTILANG<br>';
+			var_export( $this->is_multilang() );
+			echo '</pre>';
+
+			echo '<pre>IS_SPECIAL_MULTILANG_PLUGIN_ACTIVE<br>';
+			var_export( $this->is_special_multilang_active() );
+			echo '</pre>';
+
+			echo '<pre>DB_OPTIONS<br>';
+			var_export( $this->db_options );
+			echo '</pre>';
 
 		}
 
@@ -2003,35 +2166,13 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				echo '<input type="hidden" name="_language" value="' . $current_language . '">';
 			}
 
-			$sections = 0;
-
-			foreach ( $this->fields as $section ) {
-				$sections ++;
-			}
+			$sections = count( $this->fields );
 
 			$tabbed = ( $sections > 1 && $this->config['tabbed'] ) ? ' exopite-sof-content-nav exopite-sof-content-js' : '';
 
 			if ( $this->debug ) {
 
-				echo '<pre>MULTILANG<br>';
-				var_export( $this->config['multilang'] );
-				echo '</pre>';
-
-				echo '<pre>IS_SIMPLE:<br>';
-				var_export( $this->is_options_simple() );
-				echo '</pre>';
-
-				echo '<pre>IS_MULTILANG<br>';
-				var_export( $this->is_multilang() );
-				echo '</pre>';
-
-				echo '<pre>IS_SPECIAL_MULTILANG_PLUGIN_ACTIVE<br>';
-				var_export( $this->is_special_multilang_active() );
-				echo '</pre>';
-
-				echo '<pre>DB_OPTIONS<br>';
-				var_export( $this->db_options );
-				echo '</pre>';
+				$this->display_debug_infos();
 
 			}
 
@@ -2043,36 +2184,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			if ( ! empty( $tabbed ) ) {
 
-				echo '<div class="exopite-sof-nav"><ul class="exopite-sof-nav-list">';
-				foreach ( $this->fields as $section ) {
-					$active = '';
-					if ( $section === reset( $this->fields ) ) {
-						$active = ' active';
-					}
-
-					$depend = '';
-					$hidden = '';
-
-					// Dependency for tabs too
-					if ( ! empty( $section['dependency'] ) ) {
-						$hidden = ' hidden';
-						$depend = ' data-controller="' . $section['dependency'][0] . '"';
-						$depend .= ' data-condition="' . $section['dependency'][1] . '"';
-						$depend .= ' data-value="' . $section['dependency'][2] . '"';
-					}
-
-					echo '<li  class="exopite-sof-nav-list-item' . $active . $hidden . '"' . $depend . ' data-section="' . $section['name'] . '">';
-					if ( strpos( $section['icon'], 'dashicon' ) !== false ) {
-						echo '<span class="dashicons-before ' . $section['icon'] . '"></span>';
-					} elseif ( strpos( $section['icon'], 'fa' ) !== false ) {
-						echo '<span class="fa-before ' . $section['icon'] . '" aria-hidden="true"></span>';
-					}
-					echo $section['title'];
-					echo '</li>';
-
-				}
-
-				echo '</ul></div>';
+				$this->get_menu();
 
 			}
 
