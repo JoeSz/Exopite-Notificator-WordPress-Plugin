@@ -2,12 +2,16 @@
 	die;
 } // Cannot access pages directly.
 /**
- * Last edit: 2019-02-18
+ * Last edit: 2019-04-07
  *
  * INFOS AND TODOS:
+ * - fix: typography not working in group
+ * - fix: typography font-weight not save/restore
+ * - fix: if no group title, then take parents
  *
- * - IDEAS
- *   - import options from file
+ * IDEAS
+ * - import options from file
+ * - chunk upload
  */
 /**
  * ToDos:
@@ -26,6 +30,7 @@
  * - content
  * - date
  * - editor
+ * - gallery
  * - group/accordion item
  * - hidden
  * - image
@@ -162,7 +167,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				return;
 			}
 
-			$this->version = '20190218';
+			$this->version = '20190407';
 
 			// TODO: Do sanitize $config['id']
 			$this->unique = $config['id'];
@@ -191,9 +196,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			$this->define_shared_hooks();
 
-			$this->define_menu_hooks();
-
-			$this->define_metabox_hooks();
+			$this->define_hooks();
 
 		}
 
@@ -328,34 +331,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		}
 
-		public function get_array_nested_value( array $main_array, array $keys_array, $default_value = null ) {
-
-			$length = count( $keys_array );
-
-			for ( $i = 0; $i < $length; $i ++ ) {
-
-				$is_set = ( isset( $main_array[ $keys_array[ $i ] ] ) ) ? true : false;
-
-				if ( ! $is_set ) {
-					// if the array key is not set, we break out of loop and return $$default_value
-					break;
-				} else {
-					// Reset the $main_array to the sub array that we know exit
-					$main_array = $main_array[ $keys_array[ $i ] ];
-
-					if ( $i === $length - 1 ) { // We are at the last item of array
-						// $main_array is now the required value / array
-						return $main_array;
-					}
-
-				}
-
-			} // end for loop
-
-			return $default_value;
-
-		}
-
 		public function display_error() {
 			add_action( 'admin_notices', array( $this, 'display_admin_error' ) );
 		}
@@ -397,6 +372,20 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		}//define_shared_hooks()
 
+		protected function define_hooks() {
+
+			if ( $this->is_menu() ) {
+
+				$this->define_menu_hooks();
+
+			} elseif ( $this->is_metabox() ) {
+
+				$this->define_metabox_hooks();
+
+			}
+
+		}
+
 		/**
 		 * Register all of the hooks related to 'menu' functionality
 		 *
@@ -404,27 +393,26 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 */
 		protected function define_menu_hooks() {
 
-			if ( $this->is_menu() ) {
-				/**
-				 * Load options only if menu
-				 * on metabox, page id is not yet available
-				 */
-				$this->db_options = apply_filters( 'exopite_sof_menu_get_options', get_option( $this->unique ), $this->unique );
+			/**
+			 * Load options only if menu
+			 * on metabox, page id is not yet available
+			 */
+			$this->db_options = apply_filters( 'exopite_sof_menu_get_options', get_option( $this->unique ), $this->unique );
 
 
-				add_action( 'admin_init', array( $this, 'register_setting' ) );
-				add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
-				add_action( 'wp_ajax_exopite-sof-export-options', array( $this, 'export_options' ) );
-				add_action( 'wp_ajax_exopite-sof-import-options', array( $this, 'import_options' ) );
-				add_action( 'wp_ajax_exopite-sof-reset-options', array( $this, 'reset_options' ) );
+			add_action( 'admin_init', array( $this, 'register_setting' ) );
+			add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+			add_action( 'wp_ajax_exopite-sof-export-options', array( $this, 'export_options' ) );
+			add_action( 'wp_ajax_exopite-sof-import-options', array( $this, 'import_options' ) );
+			add_action( 'wp_ajax_exopite-sof-reset-options', array( $this, 'reset_options' ) );
 
-				if ( isset( $this->config['plugin_basename'] ) && ! empty( $this->config['plugin_basename'] ) ) {
-					add_filter( 'plugin_action_links_' . $this->config['plugin_basename'], array(
-						$this,
-						'plugin_action_links'
-					) );
-				}
+			if ( isset( $this->config['plugin_basename'] ) && ! empty( $this->config['plugin_basename'] ) ) {
+				add_filter( 'plugin_action_links_' . $this->config['plugin_basename'], array(
+					$this,
+					'plugin_action_links'
+				) );
 			}
+
 		}
 
 		/**
@@ -434,17 +422,13 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 */
 		protected function define_metabox_hooks() {
 
-			if ( $this->is_metabox() ) {
-
-				/**
-				 * Add metabox and register custom fields
-				 *
-				 * @link https://code.tutsplus.com/articles/rock-solid-wordpress-30-themes-using-custom-post-types--net-12093
-				 */
-				add_action( 'admin_init', array( $this, 'add_meta_box' ) );
-				add_action( 'save_post', array( $this, 'save' ) );
-
-			}
+			/**
+			 * Add metabox and register custom fields
+			 *
+			 * @link https://code.tutsplus.com/articles/rock-solid-wordpress-30-themes-using-custom-post-types--net-12093
+			 */
+			add_action( 'admin_init', array( $this, 'add_meta_box' ) );
+			add_action( 'save_post', array( $this, 'save' ) );
 
 		}
 
@@ -575,9 +559,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 				$option_key = sanitize_key( $_POST['unique'] );
 
-				// Using base_64_decode
-				// $value = unserialize( gzuncompress( stripslashes( call_user_func( 'base' . '64' . '_decode', rtrim( strtr( $_POST['value'], '-_', '+/' ), '=' ) ) ) ) );
-
 				//Using json_decode
 				$value = json_decode( stripslashes( $_POST['value'] ), true );
 
@@ -605,10 +586,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				header( 'Content-Transfer-Encoding: binary' );
 				header( 'Pragma: no-cache' );
 				header( 'Expires: 0' );
-
-				// Using base64_encode
-				// echo rtrim( strtr( call_user_func( 'base' . '64' . '_encode', addslashes( gzcompress( serialize( get_option( $option_key ) ), 9 ) ) ), '+/', '-_' ), '=' );
-				// Why we are using base64_encode to hide the options? We should use the standard json to transfer/save settings between . It is suspicious always.
 
 				// Using json_encode()
 				echo json_encode( get_option( $option_key ) );
@@ -641,6 +618,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			require_once 'multilang-class.php';
 			require_once 'fields-class.php';
 			require_once 'upload-class.php';
+			require_once 'sanitize-class.php';
 
 		}
 
@@ -783,25 +761,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			// if nothing is returned so far, return original $links
 			return $links;
 
-		}
-
-		/**
-		 * Get default config for group type field
-		 * @return array $default
-		 */
-		public function get_config_default_group_options() {
-
-			$default = array(
-				//
-				'repeater'        => true,
-				'accordion'       => true,
-				'button_title'    => __( 'Add New', 'exopite-options-framework' ),
-				'accordion_title' => __( 'Accordion Title', 'exopite-options-framework' ),
-				'limit'           => 50,
-				'sortable'        => true,
-			);
-
-			return apply_filters( 'exopite_sof_filter_config_default_group_array', $default );
 		}
 
 		/**
@@ -980,7 +939,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				// Add the date picker script
 				wp_enqueue_script( 'jquery-ui-datepicker' );
 
-				wp_enqueue_script( 'jquery-ui-sortable' );
+				// wp_enqueue_script( 'jquery-ui-sortable' );
 
 				$scripts_styles = array(
 					array(
@@ -990,6 +949,13 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 							'jquery',
 							'jquery-ui-datepicker',
 							'wp-color-picker'
+						),
+					),
+					array(
+						'name' => 'jquery.sortable',
+						'fn'   => 'html5sortable.min.js',
+						'dep'  => array(
+							'jquery',
 						),
 					),
 					array(
@@ -1028,8 +994,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 *
 		 */
 		public function save( $posted_data ) {
-
-			// $this->write_log( 'posted_post', var_export( $_POST, true ) . PHP_EOL . PHP_EOL );
 
 			// Is user has ability to save?
 			if ( ! current_user_can( $this->config['capability'] ) ) {
@@ -1137,39 +1101,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				}
 			}
 
-			/**
-			 * Loop all fields (from $config fields array ) and update values from $_POST
-			 *
-			 * for both menu and meta
-			 *
-			 * Sanitization order:
-			 * - save
-			 * - get_sanitized_fields_values
-			 * - get_sanitized_field_value_from_global_post
-			 * - sanitize
-			 * - get_sanitized_field_value_by_type
-			 */
-			$section_fields_current_lang = array();
-
-			foreach ( $this->fields as $section ) {
-
-				// Make sure we have $fields array and get sanitized Values
-				if ( isset( $section['fields'] ) && is_array( $section['fields'] ) ) {
-
-					$section_fields_current_lang = array_merge(
-						$section_fields_current_lang,  // Value we currently have in the array
-						$this->get_sanitized_fields_values( $section['fields'], $posted_data ) // sanitized array we are getting
-					);
-
-				}
-
-			}
-
-			// update $section_fields_with_values with $section_fields_current_lang
+			$sanitizer = new Exopite_Simple_Options_Framework_Sanitize( $this->is_multilang(), $this->lang_current, $this->config, $this->fields );
 			if ( $this->is_multilang() ) {
-				$section_fields_with_values[ $this->lang_current ] = $section_fields_current_lang;
+				$section_fields_with_values[ $this->lang_current ] = $sanitizer->get_sanitized_values( $this->fields, $posted_data[$this->lang_current] );
 			} else {
-				$section_fields_with_values = $section_fields_current_lang;
+				$section_fields_with_values = $sanitizer->get_sanitized_values( $this->fields, $posted_data );
 			}
 
 			/**
@@ -1203,7 +1139,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 					if ( $this->is_options_simple() ) {
 
 						foreach ( $valid as $key => $value ) {
-//							$meta_key = $this->unique . '_' . $key;
 
 							update_post_meta( $post_id, $key, $value );
 
@@ -1224,313 +1159,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		public function write_log( $type, $log_line ) {
 
 			$hash        = '';
-			$fn          = plugin_dir_path( __FILE__ ) . '/' . $type . '-' . $hash . '.log';
+			$fn          = plugin_dir_path( __FILE__ ) . '/' . $type . $hash . '.log';
 			$log_in_file = file_put_contents( $fn, date( 'Y-m-d H:i:s' ) . ' - ' . $log_line . PHP_EOL, FILE_APPEND );
-
-		}
-
-
-		public function get_sanitized_fields_values( $fields, $posted_data ) {
-
-			$sanitized_fields_data = array();
-			foreach ( $fields as $index => $field ) :
-
-				$field_type = ( isset( $field['type'] ) ) ? $field['type'] : false;
-				$field_id   = ( isset( $field['id'] ) ) ? $field['id'] : false;
-
-				// if do not have $field_id or $field_type, we continue to next field
-				if ( ! $field_id || ! $field_type ) {
-					continue;
-				}
-
-				// if field is not a group
-				if ( $field_type !== 'group' ) {
-
-					$sanitized_fields_data[ $field['id'] ] = $this->get_sanitized_field_value_from_global_post( $field, $posted_data );
-
-				} // ( $field_type !== 'group' )
-
-				// If the field is group
-				if ( $field_type === 'group' ) {
-
-					$group = $field;
-
-					$group_id = ( isset( $field['id'] ) ) ? $field['id'] : false;
-
-					$group_fields = isset( $field['fields'] ) && is_array( $field['fields'] ) ? $field['fields'] : false;
-
-					// We are not processing if group_id is not there
-					if ( $group_id && $group_fields ):
-
-						// Normalise the group options (so we dont need to check for isset()
-						$default_group_options = $this->get_config_default_group_options();
-						$group_options         = ( isset( $group['options'] ) ) ? $group['options'] : $default_group_options;
-						$group['options']      = $group_options = wp_parse_args( $group_options, $default_group_options );
-
-						$is_repeater = ( isset( $group['options']['repeater'] ) ) ? (bool) $group['options']['repeater'] : false;
-
-						// If the group is NOT a repeater
-						if ( ! $is_repeater ) :
-
-							foreach ( $group_fields as $sub_field ) :
-
-								$sub_field_id = ( isset( $sub_field['id'] ) ) ? $sub_field['id'] : false;
-
-								$sanitized_fields_data[ $group_id ][ $sub_field_id ] = $this->get_sanitized_field_value_from_global_post( $sub_field, $posted_data, $group_id );
-
-							endforeach;
-
-						endif; // ( ! $is_repeater )  // If the group is NOT a repeater
-
-						// If the group is a repeater
-						if ( $is_repeater ):
-
-							$repeater_count = 0;
-
-							if ( $this->is_multilang() ) {
-								// How many times $_POST has this
-
-								$repeater_count = ( isset( $posted_data[ $this->lang_current ][ $group_id ] ) && is_array( $posted_data[ $this->lang_current ][ $group_id ] ) ) ? count( $posted_data[ $this->lang_current ][ $group_id ] ) : 0;
-
-							} // $this->is_multilang()
-
-							/**
-							 * ToDos:
-							 * - On simple options NEED to disable multilang! (if meta)
-							 */
-							if ( ! $this->is_multilang() ) {
-
-								$repeater_count = ( isset( $posted_data[ $group_id ] ) && is_array( $posted_data[ $group_id ] ) ) ? count( $posted_data[ $group_id ] ) : 0;
-
-							}
-
-							for ( $i = 0; $i < $repeater_count; $i ++ ) {
-
-								foreach ( $group_fields as $sub_field ) :
-
-									$sub_field_id = ( isset( $sub_field['id'] ) ) ? $sub_field['id'] : false;
-
-									// sub field id is required
-									if ( ! $sub_field_id ) {
-										continue;
-									}
-
-									$sanitized_fields_data[ $group_id ][ $i ][ $sub_field_id ] = $this->get_sanitized_field_value_from_global_post( $sub_field, $posted_data, $group_id, $i );
-
-								endforeach; // $group_fields
-							}
-
-						endif; // ( $is_repeater )
-
-					endif; // ( ! $group_id )
-
-				} // ( $field_type === 'group' )
-
-			endforeach; // $fields array
-
-			return $sanitized_fields_data;
-
-		} // get_sanitized_fields_values
-
-		/**
-		 * Get the clean value from single field
-		 *
-		 * @param array $field
-		 *
-		 * @return mixed $clean_value
-		 */
-		public function get_sanitized_field_value_from_global_post( $field, $posted_data = array(), $group_id = null, $group_field_index = null ) {
-
-			if ( ! isset( $field['id'] ) || ! isset( $field['type'] ) ) {
-				return '';
-			} else {
-				$field_id   = $field['id'];
-				$field_type = $field['type'];
-			}
-
-			// Initialize array
-			$keys_array = array();
-
-			// Adding elements to $keys_array
-			// order matters!!!
-
-			if ( $this->is_multilang() ) {
-				$keys_array[] = $this->lang_current;
-			}
-
-			if ( $group_id !== null ) {
-				$keys_array[] = $group_id;
-			}
-
-			if ( $group_field_index !== null ) {
-				$keys_array[] = $group_field_index;
-			}
-
-			$keys_array[] = $field_id;
-
-			// Get $dirty_value from global $_POST
-			$dirty_value = $this->get_array_nested_value( $posted_data, $keys_array, '' );
-
-			$clean_value = $this->sanitize( $field, $dirty_value );
-
-			return $clean_value;
-
-		}
-
-		/**
-		 * Validate and sanitize values
-		 *
-		 * @param $field
-		 * @param $value
-		 *
-		 * @return mixed
-		 */
-		public function sanitize( $field, $dirty_value ) {
-
-			$dirty_value = isset( $dirty_value ) ? $dirty_value : '';
-
-			// if $config array has sanitize function, then call it
-			if ( isset( $field['sanitize'] ) && ! empty( $field['sanitize'] ) && function_exists( $field['sanitize'] ) ) {
-
-				// TODO: in future, we can allow for sanitize functions array as well
-				$sanitize_func_name = $field['sanitize'];
-
-				$clean_value = call_user_func( $sanitize_func_name, $dirty_value );
-
-			} else {
-
-				// if $config array doe not have sanitize function, do sanitize on field type basis
-				$clean_value = $this->get_sanitized_field_value_by_type( $field, $dirty_value );
-
-			}
-
-			return apply_filters( 'exopite_sof_sanitize_value', $clean_value, $dirty_value, $field, $this->config );
-
-		}
-
-		/**
-		 * Pass the field and value to run sanitization by type of field
-		 *
-		 * @param array $field
-		 * @param mixed $value
-		 *
-		 * $return mixed $value after sanitization
-		 */
-		public function get_sanitized_field_value_by_type( $field, $value ) {
-
-			$field_type = ( isset( $field['type'] ) ) ? $field['type'] : '';
-
-			switch ( $field_type ) {
-
-				case 'panel':
-					// no break
-				case 'notice':
-					/**
-					 * This fields has nothing to send
-					 */
-					break;
-				case 'image_select':
-					// no break
-				case 'select':
-					// no break
-				case 'typography':
-					// no break
-				case 'tab':
-					// no break
-				case 'tap_list':
-					/**
-					 * Need to check array values.
-					 */
-					// if( ! is_array( $value ) ) {
-					// 	maybe_unserialize( $value );
-					// }
-					if ( is_array( $value ) ) {
-						foreach( $value as &$item ) {
-							$item = sanitize_text_field( $item );
-						}
-					}
-
-					break;
-				case 'editor':
-					// no break
-				case 'textarea':
-					/**
-					 * HTML excepted accept <textarea>.
-					 * @link https://codex.wordpress.org/Function_Reference/wp_kses_allowed_html
-					 */
-					$allowed_html = wp_kses_allowed_html( 'post' );
-					// Remove '<textarea>' tag
-					unset ( $allowed_html['textarea'] );
-					/**
-					 * wp_kses_allowed_html return the wrong values for wp_kses,
-					 * need to change "true" -> "array()"
-					 */
-					array_walk_recursive(
-						$allowed_html,
-						function (&$value) {
-							if (is_bool($value)) {
-								$value = array();
-							}
-						}
-					);
-					// Run sanitization.
-					$value = wp_kses( $value, $allowed_html );
-					break;
-
-				case 'ace_editor':
-					/**
-					 * TODO:
-					 * This is basically also a textarea.
-					 * Here user can save code, like JS or CSS or even PHP
-					 * depense of the use of the field, this can be like
-					 * "paste your google analytics code here".
-					 *
-					 * What we could do, is escape for SQL
-					 *
-					 * esc_textarea, wp_kses or wp_kses_post will remove this.
-					 * textarea will escape all ´'´, ´"´ or ´<´ (<li></li> etc...)
-					 * $value = esc_textarea( $value );
-					 * $value = wp_kses_post( $value );
-					 */
-					$value = stripslashes( $value );
-					break;
-
-				case 'switcher':
-					// no break
-				case 'checkbox':
-					/**
-					 * In theory this will be never an array.
-					 * Maybe in the future?
-					 */
-					if ( is_array( $value ) ) {
-						foreach( $value as &$item ) {
-							$item = ( $value === 'yes' ) ? 'yes' : 'no';
-						}
-					} else {
-						$value = ( $value === 'yes' ) ? 'yes' : 'no';
-					}
-					break;
-
-				case 'range':
-					// no break
-				case 'number':
-
-					$value = ( is_numeric( $value ) ) ? $value : 0;
-					if ( isset( $field['min'] ) && $value < $field['min'] ) {
-						$value = $field['min'];
-					}
-					if ( isset( $field['max'] ) && $value > $field['max'] ) {
-						$value = $field['max'];
-					}
-
-					break;
-
-				default:
-					$value = ( ! empty( $value ) ) ? sanitize_text_field( $value ) : '';
-
-			}
-
-			return $value;
 
 		}
 
