@@ -2,7 +2,7 @@
 ## WordPress Plugin
 
 - Author: Joe Szalai
-- Version: 20181123
+- Version: 20190521
 - Plugin URL: https://www.joeszalai.org/exopite/exopite-notificator/
 - Demo URL: https://www.joeszalai.org/exopite/exopite-notificator/
 - Theme GitHub URL: https://github.com/JoeSz/Exopite-Notificator
@@ -156,6 +156,9 @@ OR
 * Tested on Android phone 5.0+, Android tablet 5.1+, Windows 10
 
 ## Changelog
+
+##### 20190521
+* Update: Update Exopite Simple Options Framework
 
 ##### 20181123
 * Update Exopite Simple Options Framework.
