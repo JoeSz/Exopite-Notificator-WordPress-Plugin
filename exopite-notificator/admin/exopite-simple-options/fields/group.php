@@ -187,10 +187,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_group' ) ) {
 					continue;
 				}
 
+				$class = 'Exopite_Simple_Options_Framework_Field_' . $field['type'];
+
 				if ( $this->config['is_options_simple'] ) {
 					$field['is_options_simple'] = true;
 				}
-
 
 				$field['sub'] = true;
 

@@ -6,9 +6,9 @@
  * Field: Image
  *
  */
-if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_Image' ) ) {
+if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_image' ) ) {
 
-	class Exopite_Simple_Options_Framework_Field_Image extends Exopite_Simple_Options_Framework_Fields {
+	class Exopite_Simple_Options_Framework_Field_image extends Exopite_Simple_Options_Framework_Fields {
 
 		public function __construct( $field, $value = '', $unique = '', $config = array() ) {
 			parent::__construct( $field, $value, $unique, $config );
@@ -92,6 +92,12 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_Image' ) ) {
 			echo '<a href="#" class="button button-primary exopite-sof-button">' . $add . '</a>';
 			echo '</div>';
 			echo $this->element_after();
+
+		}
+
+		public static function enqueue( $args ) {
+
+			wp_enqueue_media();
 
 		}
 
