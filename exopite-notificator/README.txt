@@ -6,7 +6,7 @@ Requires at least: 4.7
 Tested up to: 5.2.2
 Stable tag: 4.7.0
 License: GPLv3 or later
-Version: 20190521
+Version: 20200521
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Notify by emails or Telegram chats messages on selected actions.
@@ -148,6 +148,9 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 2. This is the second screen shot
 
 == Changelog ==
+
+= 20200521 =
+* Fix typo
 
 = 20190521 =
 * Update: Update Exopite Simple Options Framework
