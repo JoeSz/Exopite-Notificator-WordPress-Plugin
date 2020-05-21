@@ -87,7 +87,7 @@ class Exopite_Client_Detector {
         $ros[] = array('(sunos)([0-9]{1,2}\.[0-9]{1,2}){0,1}', 'SunOS');
         $ros[] = array('(beos)([0-9]{1,2}\.[0-9]{1,2}){0,1}', 'BeOS');
         $ros[] = array('(risc os)([0-9]{1,2}\.[0-9]{1,2})', 'RISC OS');
-        $ros[] = array('os/2', 'OS/2');
+        $ros[] = array('os\/2', 'OS/2');
         $ros[] = array('freebsd', 'FreeBSD');
         $ros[] = array('openbsd', 'OpenBSD');
         $ros[] = array('netbsd', 'NetBSD');
@@ -152,7 +152,7 @@ class Exopite_Client_Detector {
         $os = '';
         for ( $n=0 ; $n<$file ; $n++ ){
 
-            if ( preg_match('/'.$ros[$n][0].'/i' , $agent, $name)){
+            if ( preg_match('/'.$ros[$n][0].'/i' , $agent)){
                 // $os = @$ros[$n][1].' '.$name[0];
 
                 $os = @$ros[$n][1];
