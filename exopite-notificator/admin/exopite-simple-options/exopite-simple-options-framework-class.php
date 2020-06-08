@@ -2,12 +2,9 @@
 	die;
 } // Cannot access pages directly.
 /**
- * Last edit: 2019-12-03
+ * Last edit: 2020-05-21
  *
  * INFOS AND TODOS:
- * - fix: typography not working in group
- * - fix: typography font-weight not save/restore
- * - fix: if no group title, then take parents
  *
  * IDEAS
  * - import options from file
@@ -205,7 +202,12 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		public function get_mo_file() {
 			$path = wp_normalize_path( dirname( __FILE__ ) ) . '/lang';
 			$domain = 'exopite-sof';
-			$locale = determine_locale();
+			if ( function_exists( 'determine_locale' ) ) {
+				$locale = determine_locale();
+			} else {
+				$locale = get_locale();
+			}
+
 			return $path . '/' . $domain . '-' . $locale . '.mo';
 		}
 
@@ -1128,6 +1130,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				$section_fields_with_values = $sanitizer->get_sanitized_values( $this->fields, $posted_data );
 			}
 
+            // Add values here, which start with '_', to skip sanitization.
+            // This values does not come from the framework.
+            foreach ( $valid as $key => $value ) {
+                if ( ! isset( $section_fields_with_values[ $key ] ) ) {
+                    $section_fields_with_values[ $key ] = $value;
+                }
+            }
+
 			/**
 			 * The idea here is that, this hook run on both.
 			 */
@@ -1693,7 +1703,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				$depend .= ' data-value="' . $section['dependency'][2] . '"';
 			}
 
-			echo '<li  class="exopite-sof-nav-list-item' . $active . $hidden . '"' . $depend . ' data-section="' . $section['name'] . '">';
+            $section_name = ( isset( $section['name'] ) ) ? $section['name'] : '';
+
+			echo '<li  class="exopite-sof-nav-list-item' . $active . $hidden . '"' . $depend . ' data-section="' . $section_name . '">';
 			echo '<span class="exopite-sof-nav-list-item-title">';
 			$this->get_menu_item_icons( $section );
 			echo $section['title'];
