@@ -1087,14 +1087,24 @@ class Exopite_Notificator_Admin {
 
         if ( ( isset( $actions[$template_fields['alert-type']] ) ) ) {
             $template_fields['alert-type'] = $actions[$template_fields['alert-type']];
-        }
 
-        foreach ( $template_fields as $name => $value ) {
-            $template = str_replace(
-                '{{' . $name . '}}',
-                $value,
-                $template
-            );
+            foreach ( $template_fields as $name => $value ) {
+
+                $value_temp = $value;
+
+                if ( is_array( $value_temp ) ) {
+                    if ( isset( $value_temp[0] ) ) {
+                        $value_temp = $value_temp[0];
+                    }
+                    continue;
+                }
+                $template = str_replace(
+                    '{{' . $name . '}}',
+                    $value_temp,
+                    $template
+                );
+            }
+
         }
 
         $template = preg_replace(
@@ -1187,7 +1197,13 @@ class Exopite_Notificator_Admin {
 
             if ( in_array( $key, $ignore ) ) continue;
 
-            $logline[] = $key . ': ' . $value;
+            $value_temp = $value;
+
+            if ( is_array( $value ) ) {
+                $value_temp = var_export( $value, true );
+            }
+
+            $logline[] = $key . ': ' . $value_temp;
 
         }
 
