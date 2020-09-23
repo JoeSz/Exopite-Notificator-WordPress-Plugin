@@ -152,7 +152,7 @@ class Exopite_Client_Detector {
         $os = '';
         for ( $n=0 ; $n<$file ; $n++ ){
 
-            if ( preg_match('/'.$ros[$n][0].'/i' , $agent)){
+            if ( preg_match('#'.$ros[$n][0].'#i' , $agent)){
                 // $os = @$ros[$n][1].' '.$name[0];
 
                 $os = @$ros[$n][1];
@@ -195,6 +195,8 @@ class Exopite_Client_Detector {
 
         $bname = $u_agent;
         $version= '';
+
+        $ub = 'Unknown';
 
         // Next get the name of the useragent yes seperately and for good reason
         if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent))
@@ -245,7 +247,7 @@ class Exopite_Client_Detector {
                 $version= $matches['version'][0];
             }
             else {
-                $version= $matches['version'][1];
+                $version = ( isset( $matches['version'][1] ) ) ? $matches['version'][1] : $matches['version'][0];
             }
         }
         else {
