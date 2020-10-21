@@ -81,11 +81,13 @@ class Exopite_Notificator {
 	 * @since    1.0.0
 	 */
 	public function __construct( $plugin_name ) {
-		if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-			$this->version = PLUGIN_NAME_VERSION;
+
+		if ( defined( 'EXOPITE_NOTIFICATOR_VERSION' ) ) {
+			$this->version = EXOPITE_NOTIFICATOR_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
+
 		$this->plugin_name = $plugin_name;
 
 		$this->load_dependencies();
