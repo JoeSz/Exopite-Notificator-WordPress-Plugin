@@ -64,7 +64,7 @@ class Exopite_Notificator_Admin {
         }
         $this->hash = $options['_hash'];
         $this->log = ( isset( $options['log'] ) && $options['log'] == 'yes' );
-        $this->send_types = array( 'email', 'telegram' );
+        $this->send_types = array( 'email', 'telegram', 'nextcloud' );
 
 	}
 
@@ -649,6 +649,111 @@ class Exopite_Notificator_Admin {
             ),
         );
 
+        $fields[] = array(
+            'name'   => 'nextcloud',
+            'title'  => 'NextCloud',
+            'icon'   => 'dashicons-cloud',
+            'fields' => array(
+
+                array(
+                    'id'      => 'nextcloud_url',
+                    'type'    => 'text',
+                    'title'   => esc_html__( 'Server URL', 'exopite-notifier' ),
+                ),
+
+                array(
+                    'id'      => 'nextcloud_user',
+                    'type'    => 'text',
+                    'title'   => esc_html__( 'Username', 'exopite-notifier' ),
+                ),
+
+                array(
+                    'id'      => 'nextcloud_password',
+                    'type'    => 'password',
+                    'title'   => esc_html__( 'User Password', 'exopite-notifier' ),
+                ),
+
+                // array(
+                //     'id'      => 'telegram_token',
+                //     'type'    => 'text',
+                //     'title'   => esc_html__( 'Telegram Token', 'exopite-notifier' ),
+                //     'after'   => '<mute>' . esc_html__( 'Note: you have to create a bot and chat first. If you do not have any,', 'exopite-notifier' ) . ' <a href="https://joe.szalai.org/exopite/exopite-notificator/create-telegram-bot/" target="_blank">' . esc_html__( 'read this instuctions.', 'exopite-notifier' ) . '</a></mute>',
+                // ),
+
+                array(
+                    'type'    => 'group',
+                    'id'      => 'nextcloud',
+                    'title'   => 'Notifications',
+                    'options' => array(
+                        'repeater'          => true,
+                        'accordion'         => true,
+                        'button_title'      => 'Add new',
+                        'accordion_title'   => 'Accordion Title',
+                        'limit'             => 50,
+                    ),
+                    'fields'  => array(
+
+                        array(
+                            'id'      => 'nextcloud_name',
+                            'type'    => 'text',
+                            'title'   => esc_html__( 'Name', 'exopite-notifier' ),
+                            'attributes' => array(
+                                'data-title' => 'title',
+                                'placeholder' => esc_html__( 'Name of the notification', 'exopite-notifier' ),
+                            ),
+                        ),
+
+                        array(
+                            'id'      => 'nextcloud_active',
+                            'type'    => 'switcher',
+                            'title'   => esc_html__( 'Active', 'exopite-notifier' ),
+                            'default' => 'yes',
+
+                        ),
+
+                        array(
+                            'id'             => 'nextcloud_type',
+                            'type'           => 'select',
+                            'title'          => 'Type',
+                            'query'          => array(
+                                'type'          => 'callback',
+                                'function'      => array( $this, 'get_all_actions' ),
+                                'args'          => array() // WordPress query args
+                            ),
+                            // 'options'        => 'callback',
+                            // 'query_args'     => array(
+                            //     'function'      => array( $this, 'get_all_actions' ),
+                            // ),
+                            'attributes' => array(
+                                'style'    => 'width: 200px; height: 56px;',
+                            ),
+                            'class'       => 'chosen alert-action',
+
+                        ),
+
+                        array(
+                            'id'      => 'nextcloud_recipients',
+                            'type'    => 'text',
+                            'title'   => esc_html__( 'Recipients (Chat IDs)', 'exopite-notifier' ),
+                            'after'   => '<mute>' . esc_html__( 'comma separated list', 'exopite-notifier' ) . '</mute>',
+                        ),
+
+                        array(
+                            'id'      => 'nextcloud_template',
+                            'type'    => 'textarea',
+                            'class'   => 'alert-action-target-js',
+                            'title'   => esc_html__( 'Notification body', 'exopite-notifier' ),
+                            'default' => '{{alert-type}} on {{site-name}}' . PHP_EOL . 'IP: {{user-ip}}' . PHP_EOL . 'IP: {{user-agent}}' . PHP_EOL . 'Date: {{datetime}}',
+                            'after'   => '<mute>' . esc_html__( 'Available fields: ', 'exopite-notifier' ) . '<br><code class="availabe-fields">' . $this->get_fields() . '</code><br>' . esc_html( 'Note: not all field are available on all notification types. ', 'exopite-notifier' ) . '</mute>',
+                        ),
+
+                    ),
+
+                ),
+
+            ),
+        );
+
         $options = get_exopite_sof_option( $this->plugin_name );
 
         $options_panel = new Exopite_Simple_Options_Framework( $config, $fields );
@@ -774,62 +879,41 @@ class Exopite_Notificator_Admin {
 
     }
 
-    public function send_mail( $emails, $subject, $message ) {
-
-        if ( ! class_exists( 'PHPMailer' ) ) {
-            include_once( ABSPATH . WPINC . '/class-phpmailer.php' );
-        }
+    public function send_message_nextcloud( $item, $message ) {
 
         $options = get_exopite_sof_option( $this->plugin_name );
 
-        $mail = new PHPMailer();
-        if ( $options['smtp_html'] == 'yes' ) {
-            $mail->IsHTML( true );
-        } else {
-            $mail->ContentType = 'text/plain';
-            $mail->IsHTML( false );
-        }
+        $nextcloud_channels_options = apply_filters( 'nextcloud_recipients', $item['nextcloud_recipients'], $item, $message );
 
-        $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host = $options['smtp_host'];  // Specify main and backup server
-        $mail->SMTPAuth = true;                               // Enable SMTP authentication
-        $mail->Username = $options['smtp_user'];                            // SMTP username
-        $mail->Password = $options['smtp_password'];                           // SMTP password
-        if ( ! empty( $options['smtp_security'] ) ) $mail->SMTPSecure = $options['smtp_security'];                            // Enable encryption, 'ssl' also accepted
-        $mail->Port = $options['smtp_port'];
-        $mail->SetFrom( $options['smtp_from_email'], apply_filters( 'exopite-notificator-sender-name', $options['smtp_from_name'] ) );
-        $mail->addReplyTo( $options['smtp_reply_email'], apply_filters( 'exopite-notificator-sender-name', $options['smtp_from_name'] ) );
-        $mail->CharSet = 'UTF-8';
+        if ( empty( $nextcloud_channels_options ) ) return;
+        $nextcloud_channels = array_filter( explode( ',', preg_replace( '/\s+/', '', $nextcloud_channels_options ) ) );
 
-        // Check comma, if yes, explode
-        if( ! is_array( $emails ) && strpos( $emails, ',' ) !== false ) {
-            $emails = explode( ',', $emails );
-        }
+        $message = apply_filters( 'exopite-notificator-nextcloud-before-body', '', $item, $message ) .
+                   apply_filters( 'exopite-notificator-nextcloud-body', $message, $item ) .
+                   apply_filters( 'exopite-notificator-nextcloud-after-body', '', $item, $message );
 
-        $emails = apply_filters( 'exopite-notificator-subject', $emails );
+        $message = html_entity_decode( $message );
 
-        if ( is_array( $emails ) ) {
-            foreach ( $emails as $email ) {
-                $mail->AddAddress( $email );
+        do_action( 'exopite-notificator-nextcloud-before-send', $item, $message, $options );
+
+        if (
+            ( isset( $options['nextcloud_url'] ) && ! empty( $options['nextcloud_url'] ) ) &&
+            ( isset( $options['nextcloud_user'] ) && ! empty( $options['nextcloud_user'] ) ) &&
+            ( isset( $options['nextcloud_password'] ) && ! empty( $options['nextcloud_password'] ) )
+        ) {
+
+            foreach ( $nextcloud_channels as $nextcloud_channel ) {
+
+                $nextcloud_messenger = new NextCloud_Messenger();
+                $result = $nextcloud_messenger->send_message( $options['nextcloud_url'], $options['nextcloud_user'], $options['nextcloud_password'], $nextcloud_channel, $message );
+
+                // check result, maybe log?
+
             }
-        } else {
-            $mail->AddAddress( $emails );
+
         }
 
-
-        $mail->Subject = apply_filters( 'exopite-notificator-subject', $subject );
-        $mail->Body = apply_filters( 'exopite-notificator-message', $message );
-        $info = $mail->Send();
-
-        // if ( $this->log ) {
-        //     $this->write_log( 'send_message_email', 'emails: ' . var_export( $emails, true ) );
-        //     $this->write_log( 'send_message_email', 'info: ' . var_export( $info, true ) );
-        //     $this->write_log( 'send_message_email', 'email: ' . var_export( $mail, true ) );
-        //     $this->write_log( 'send_message_email', 'options: ' . var_export( $options, true ) );
-        //     $this->write_log( 'send_message_email', '------------------------------------------------------------------' . PHP_EOL . PHP_EOL );
-        // }
-
-        return $info;
+        do_action( 'exopite-notificator-nextcloud-after-send', $item, $message, $options );
 
     }
 
@@ -925,6 +1009,65 @@ class Exopite_Notificator_Admin {
         do_action( 'exopite-notificator-email-after-send', $item, $message, $to, $subject, $body, $header );
 
         return $ret;
+
+    }
+
+    public function send_mail( $emails, $subject, $message ) {
+
+        if ( ! class_exists( 'PHPMailer' ) ) {
+            include_once( ABSPATH . WPINC . '/class-phpmailer.php' );
+        }
+
+        $options = get_exopite_sof_option( $this->plugin_name );
+
+        $mail = new PHPMailer();
+        if ( $options['smtp_html'] == 'yes' ) {
+            $mail->IsHTML( true );
+        } else {
+            $mail->ContentType = 'text/plain';
+            $mail->IsHTML( false );
+        }
+
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = $options['smtp_host'];  // Specify main and backup server
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Username = $options['smtp_user'];                            // SMTP username
+        $mail->Password = $options['smtp_password'];                           // SMTP password
+        if ( ! empty( $options['smtp_security'] ) ) $mail->SMTPSecure = $options['smtp_security'];                            // Enable encryption, 'ssl' also accepted
+        $mail->Port = $options['smtp_port'];
+        $mail->SetFrom( $options['smtp_from_email'], apply_filters( 'exopite-notificator-sender-name', $options['smtp_from_name'] ) );
+        $mail->addReplyTo( $options['smtp_reply_email'], apply_filters( 'exopite-notificator-sender-name', $options['smtp_from_name'] ) );
+        $mail->CharSet = 'UTF-8';
+
+        // Check comma, if yes, explode
+        if( ! is_array( $emails ) && strpos( $emails, ',' ) !== false ) {
+            $emails = explode( ',', $emails );
+        }
+
+        $emails = apply_filters( 'exopite-notificator-subject', $emails );
+
+        if ( is_array( $emails ) ) {
+            foreach ( $emails as $email ) {
+                $mail->AddAddress( $email );
+            }
+        } else {
+            $mail->AddAddress( $emails );
+        }
+
+
+        $mail->Subject = apply_filters( 'exopite-notificator-subject', $subject );
+        $mail->Body = apply_filters( 'exopite-notificator-message', $message );
+        $info = $mail->Send();
+
+        // if ( $this->log ) {
+        //     $this->write_log( 'send_message_email', 'emails: ' . var_export( $emails, true ) );
+        //     $this->write_log( 'send_message_email', 'info: ' . var_export( $info, true ) );
+        //     $this->write_log( 'send_message_email', 'email: ' . var_export( $mail, true ) );
+        //     $this->write_log( 'send_message_email', 'options: ' . var_export( $options, true ) );
+        //     $this->write_log( 'send_message_email', '------------------------------------------------------------------' . PHP_EOL . PHP_EOL );
+        // }
+
+        return $info;
 
     }
 
