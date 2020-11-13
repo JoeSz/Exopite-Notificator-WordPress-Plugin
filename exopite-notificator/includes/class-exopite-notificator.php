@@ -163,7 +163,9 @@ class Exopite_Notificator {
          * forked from Notifygram by Anton Ilzheev <ilzheev@gmail.com>
          * Attention! $method always must be started with slash " / "
          */
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendors/telegram/notifcaster.class.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendors/telegram/notifcaster.class.php';
+
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendors/nextcloud/nextcloud_messenger.class.php';
 
 		$this->loader = new Exopite_Notificator_Loader();
 
