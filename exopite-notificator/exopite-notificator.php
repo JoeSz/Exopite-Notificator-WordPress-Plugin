@@ -68,6 +68,7 @@
  * - kik (https://botsupport.kik.com/hc/en-us/articles/225603567-How-much-does-it-cost-to-make-a-bot-)
  *       (https://github.com/pimax/kik-bot-php)
  * - Threema (https://gateway.threema.ch/en/developer/api)
+ *           (https://gateway.threema.ch/en/developer/sdk-php)
  * - Facebook (https://github.com/RoySegall/facebook-messenger-send-api, https://developers.facebook.com/docs/messenger-platform/reference/send-api)
  * - wechat (http://admin.wechat.com/wiki/index.php?title=Customer_Service_Messages)
  *          (https://github.com/garbetjie/wechat-php)
