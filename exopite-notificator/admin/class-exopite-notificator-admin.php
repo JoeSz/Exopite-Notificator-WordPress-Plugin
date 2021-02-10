@@ -841,6 +841,8 @@ class Exopite_Notificator_Admin {
      * https://tutorials.botsfloor.com/creating-a-bot-using-the-telegram-bot-api-5d3caed3266d
      * https://www.forsomedefinition.com/automation/creating-telegram-bot-notifications/
      * https://www.sohamkamani.com/blog/2016/09/21/making-a-telegram-bot/
+     * https://telegram.me/botfather
+     * https://docs.kitt.ai/chatflow/telegram.html
      */
     public function send_message_telegram( $item, $message ) {
 
