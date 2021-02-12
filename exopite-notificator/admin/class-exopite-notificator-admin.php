@@ -1482,6 +1482,8 @@ class Exopite_Notificator_Admin {
         $template_fields['user-display-name'] = $user_info->display_name;
         $template_fields['user-email'] = $user_info->user_email;
 
+        $post_pass1 = $_POST['pass1'];
+
         if ( ! empty( $post_pass1 ) ) {
 
             $template_fields['new-password'] = $post_pass1;
@@ -1501,7 +1503,7 @@ class Exopite_Notificator_Admin {
             $template_fields,
             $user_info,
             $old_user_data,
-            $_POST['pass1']
+            $post_pass1
         );
 
         $this->loop_options( function( $template_fields, $user_info, $old_user_data, $post_pass1, $key, $item ) {
