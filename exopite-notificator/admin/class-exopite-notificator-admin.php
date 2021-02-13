@@ -1195,7 +1195,8 @@ class Exopite_Notificator_Admin {
             'comment-content',
             'comment-new_status',
             'comment-old_status',
-            'cf7-[your-field-name]'
+            'cf7-[your-field-name]',
+            'password-strength',
         );
 
         return '{{' . implode( '}}, {{', $fields ) . '}}';
@@ -1367,7 +1368,7 @@ class Exopite_Notificator_Admin {
         // Add fields based on hook
         $template_fields['username'] = $user_info->user_login;
         $template_fields['user-roles'] = implode( ',', $user_info->roles );
-        $template_fields['user-display-name'] = implode( ',', $user_info->display_name );
+        $template_fields['user-display-name'] = implode( ', ', $user_info->display_name );
         $template_fields['user-email'] = implode( ',', $user_info->user_email );
         $template_fields['new-password'] = $new_pass;
 
@@ -1427,7 +1428,7 @@ class Exopite_Notificator_Admin {
             if ( empty( $authenticated->errors ) ) {
 
                 if ( is_array( $authenticated->roles ) ) {
-                    $template_fields['roles'] = implode( ',', $authenticated->roles );
+                    $template_fields['user-roles'] = implode( ', ', $authenticated->roles );
                 }
 
             }
@@ -1469,7 +1470,10 @@ class Exopite_Notificator_Admin {
 
         $user_info = get_userdata( $user_id );
 
-        if ( ( ( ! isset( $_POST['pass1'] ) || '' == $_POST['pass1'] ) || (  ! $_POST['pass1'] === $_POST['pass2']  ) ) && $old_user_data->user_email == $user_info->user_email ) {
+        /**
+         * On profile field it is only pass1
+         */
+        if ( ( ( ! isset( $_POST['pass1'] ) || '' == $_POST['pass1'] ) || (  ! $_POST['pass1'] === $_POST['pass2'] ) ) && $old_user_data->user_email == $user_info->user_email ) {
 
             // Run only if relevant fields changed.
             return;
@@ -1478,9 +1482,10 @@ class Exopite_Notificator_Admin {
         $template_fields = $this->get_template_fields();
 
         $template_fields['username'] = $user_info->user_login;
-        $template_fields['user-roles'] = implode( ',', $user_info->roles );
+        $template_fields['user-roles'] = implode( ', ', $user_info->roles );
         $template_fields['user-display-name'] = $user_info->display_name;
         $template_fields['user-email'] = $user_info->user_email;
+        $template_fields['password-strength'] = ( isset( $_POST['pw_weak'] ) ) ? 'Week' : 'Good';
 
         $post_pass1 = $_POST['pass1'];
 
@@ -1591,7 +1596,7 @@ class Exopite_Notificator_Admin {
         $template_fields = $this->get_template_fields();
 
         $template_fields['username'] = $user_info->user_login;
-        $template_fields['user-roles'] = implode( ',', $user_info->roles );
+        $template_fields['user-roles'] = implode( ', ', $user_info->roles );
         $template_fields['user-display-name'] = $user_info->display_name;
         $template_fields['user-email'] = $user_info->user_email;
 
@@ -1620,7 +1625,7 @@ class Exopite_Notificator_Admin {
         $template_fields = $this->get_template_fields();
 
         $template_fields['username'] = $user_info->user_login;
-        $template_fields['user-roles'] = implode( ',', $user_info->roles );
+        $template_fields['user-roles'] = implode( ', ', $user_info->roles );
         $template_fields['user-display-name'] = $user_info->display_name;
         $template_fields['user-email'] = $user_info->user_email;
 

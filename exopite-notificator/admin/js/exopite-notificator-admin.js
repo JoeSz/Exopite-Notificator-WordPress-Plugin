@@ -5,10 +5,10 @@
 
         var alertTypes = new Array();
         var alertBasic = '{{alert-type}}, {{datetime}}, {{site-url}}, {{site-name}}, {{user-ip}}, {{user-agent}}';
-        alertTypes['login-success'] = '{{password}}, {{username}}, {{login-type}}';
+        alertTypes['login-success'] = '{{password}}, {{username}}, {{login-type}}, {{user-roles}}';
         alertTypes['login-failed'] = '{{password}}, {{username}}, {{login-type}}';
         alertTypes['password-reset'] = '{{username}}, {{user-roles}}, {{user-display-name}}, {{user-email}}, {{new-password}}';
-        alertTypes['password-changed'] = '{{username}}, {{new-password}}, {{user-roles}}, {{user-display-name}}, {{user-email}}';
+        alertTypes['password-changed'] = '{{username}}, {{new-password}}, {{user-roles}}, {{user-display-name}}, {{user-email}}, {{password-strength}}';
         alertTypes['email-changed'] = '{{username}}, {{user-roles}}, {{user-display-name}}, {{user-email}}, {{user-old-email}}';
         alertTypes['user-register-failed'] = '{{username}}, {{registration-errors}}, {{user-email}}';
         alertTypes['user-register-success'] = '{{username}}, {{user-roles}}, {{user-display-name}}, {{user-email}}';
