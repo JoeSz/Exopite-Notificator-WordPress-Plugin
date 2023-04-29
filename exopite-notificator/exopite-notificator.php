@@ -81,6 +81,19 @@
  * - whatsapp (no official API)
  * - kakaotalk (closed API)
  * - BBM  (no official API yet, will be ever?)
+ *
+ *  WhatsApp - 55%
+ *  Facebook Messenger - 31%
+ *  Instagram - 26%
+ *  Telegram - 16%
+ *  Viber - 14%
+ *  Snapchat - 13%
+ *  Skype - 11%
+ *  WeChat - 9%
+ *  Signal - 6%
+ *  Line - 5%
+ *  Threema - 1%
+ *  Slack - 1%
  */
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
