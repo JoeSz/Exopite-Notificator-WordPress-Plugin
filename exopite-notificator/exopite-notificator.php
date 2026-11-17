@@ -135,8 +135,12 @@ register_deactivation_hook( __FILE__, 'deactivate_exopite_notificator' );
 
 /**
  * Update
+ *
+ * Self-update through Plugin Update Checker 5.7 (vendors/plugin-update-checker).
+ * Switched off: nothing is loaded unless wp-config.php sets
+ * define( 'EXOPITE_NOTIFICATOR_UPDATE_CHECKER', true );
  */
-if ( is_admin() ) {
+if ( is_admin() && defined( 'EXOPITE_NOTIFICATOR_UPDATE_CHECKER' ) && EXOPITE_NOTIFICATOR_UPDATE_CHECKER ) {
 
     /**
      * A custom update checker for WordPress plugins.
@@ -149,13 +153,9 @@ if ( is_admin() ) {
      * @link https://github.com/YahnisElsts/plugin-update-checker
      * @link https://github.com/YahnisElsts/wp-update-server
      */
-    if( ! class_exists( 'Puc_v4_Factory' ) ) {
+    require_once join( DIRECTORY_SEPARATOR, array( EXOPITE_NOTIFICATOR_PATH, 'vendors', 'plugin-update-checker', 'plugin-update-checker.php' ) );
 
-        require_once join( DIRECTORY_SEPARATOR, array( EXOPITE_NOTIFICATOR_PATH, 'vendors', 'plugin-update-checker', 'plugin-update-checker.php' ) );
-
-    }
-
-    $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+    $MyUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
         'https://update.joeszalai.org/?action=get_metadata&slug=' . EXOPITE_NOTIFICATOR_PLUGIN_NAME, //Metadata URL.
         __FILE__, //Full path to the main plugin file.
         EXOPITE_NOTIFICATOR_PLUGIN_NAME //Plugin slug. Usually it's the same as the name of the directory.
@@ -225,7 +225,7 @@ function exopite_notificator_framework_missing_notice() {
 		return;
 	}
 
-	echo '<div class="notice notice-error"><p>' . esc_html__( 'Exopite Notificator needs the plugin "Exopite Simple Options Framework". Please install and activate it.', 'exopite-notificator' ) . '</p></div>';
+	echo '<div class="notice notice-error"><p>' . esc_html__( 'Exopite Notificator needs the plugin "Exopite Simple Options Framework". Please install and activate it:', 'exopite-notificator' ) . ' <a href="https://github.com/JoeSz/Exopite-Simple-Options-Framework" target="_blank" rel="noopener noreferrer">github.com/JoeSz/Exopite-Simple-Options-Framework</a></p></div>';
 
 }
 

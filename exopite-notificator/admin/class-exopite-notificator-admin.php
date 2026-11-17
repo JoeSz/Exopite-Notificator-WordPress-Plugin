@@ -113,7 +113,7 @@ class Exopite_Notificator_Admin {
             return;
         }
 
-        echo '<div class="notice notice-error"><p>' . esc_html__( 'Exopite Notificator: the settings page needs the plugin "Exopite Simple Options Framework". Please install and activate it.', 'exopite-notificator' ) . '</p></div>';
+        echo '<div class="notice notice-error"><p>' . esc_html__( 'Exopite Notificator: the settings page needs the plugin "Exopite Simple Options Framework". Please install and activate it:', 'exopite-notificator' ) . ' <a href="https://github.com/JoeSz/Exopite-Simple-Options-Framework" target="_blank" rel="noopener noreferrer">github.com/JoeSz/Exopite-Simple-Options-Framework</a></p></div>';
 
     }
 
