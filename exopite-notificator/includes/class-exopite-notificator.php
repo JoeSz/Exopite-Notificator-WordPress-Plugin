@@ -155,7 +155,7 @@ class Exopite_Notificator {
          * @link https://github.com/JoeSz/Exopite-Simple-Options-Framework
          * @author Joe Szalai
          */
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/exopite-simple-options/exopite-simple-options-framework-class.php';
+        // The options framework comes from the plugin "Exopite Simple Options Framework" (header Requires Plugins).
 
         /**
          * Notifcaster.com — sending and recieving notifcations using Telegram bot api.

@@ -23,6 +23,7 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       exopite-notificator
  * Domain Path:       /languages
+ * Requires Plugins:  exopite-simple-options
  */
 /**
  * This plugin is created for security reason, more presiecly for information about potentially dangerous activities.
@@ -200,6 +201,34 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-exopite-notificator.php';
  *
  * @since    1.0.0
  */
-global $exopite_notificator;
-$exopite_notificator = new Exopite_Notificator( EXOPITE_NOTIFICATOR_PLUGIN_NAME );
-$exopite_notificator->run();
+function run_exopite_notificator() {
+
+	global $exopite_notificator;
+
+	// The settings are read with get_exopite_sof_option() of the plugin "Exopite Simple Options Framework".
+	if ( ! function_exists( 'get_exopite_sof_option' ) ) {
+		add_action( 'admin_notices', 'exopite_notificator_framework_missing_notice' );
+		return;
+	}
+
+	$exopite_notificator = new Exopite_Notificator( EXOPITE_NOTIFICATOR_PLUGIN_NAME );
+	$exopite_notificator->run();
+
+}
+
+/**
+ * Admin notice: the plugin needs "Exopite Simple Options Framework".
+ */
+function exopite_notificator_framework_missing_notice() {
+
+	if ( ! current_user_can( 'activate_plugins' ) ) {
+		return;
+	}
+
+	echo '<div class="notice notice-error"><p>' . esc_html__( 'Exopite Notificator needs the plugin "Exopite Simple Options Framework". Please install and activate it.', 'exopite-notificator' ) . '</p></div>';
+
+}
+
+// Start after all plugins are loaded: the framework plugin is loaded after this one (alphabetical order).
+// The global $exopite_notificator exists from plugins_loaded (priority 5) on.
+add_action( 'plugins_loaded', 'run_exopite_notificator', 5 );
