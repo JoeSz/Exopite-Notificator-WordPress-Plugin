@@ -16,7 +16,7 @@
  * Plugin Name:       Exopite Notificator
  * Plugin URI:        https://joe.szalai.org/exopite/exopite-notificator
  * Description:       Notify by emails or Telegram chats on selected actions. This plugin is created for security reason, more presiecly for information about potentially dangerous activities.
- * Version:           20201113
+ * Version:           20261118
  * Author:            Joe Szalai
  * Author URI:        https://joe.szalai.org
  * License:           GPL-2.0+
@@ -106,7 +106,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'EXOPITE_NOTIFICATOR_VERSION', '20201113' );
+define( 'EXOPITE_NOTIFICATOR_VERSION', '20261118' );
 define( 'EXOPITE_NOTIFICATOR_PLUGIN_NAME', 'exopite-notificator' );
 define( 'EXOPITE_NOTIFICATOR_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -136,11 +136,12 @@ register_deactivation_hook( __FILE__, 'deactivate_exopite_notificator' );
 /**
  * Update
  *
- * Self-update through Plugin Update Checker 5.7 (vendors/plugin-update-checker).
+ * Self-update through Plugin Update Checker 6.0 (vendors/plugin-update-checker).
  * Switched off: nothing is loaded unless wp-config.php sets
  * define( 'EXOPITE_NOTIFICATOR_UPDATE_CHECKER', true );
+ * Plugin Update Checker 6.0 requires PHP 7.4, on older PHP versions it is not loaded (the plugin itself works).
  */
-if ( is_admin() && defined( 'EXOPITE_NOTIFICATOR_UPDATE_CHECKER' ) && EXOPITE_NOTIFICATOR_UPDATE_CHECKER ) {
+if ( is_admin() && defined( 'EXOPITE_NOTIFICATOR_UPDATE_CHECKER' ) && EXOPITE_NOTIFICATOR_UPDATE_CHECKER && version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 
     /**
      * A custom update checker for WordPress plugins.
@@ -155,7 +156,7 @@ if ( is_admin() && defined( 'EXOPITE_NOTIFICATOR_UPDATE_CHECKER' ) && EXOPITE_NO
      */
     require_once join( DIRECTORY_SEPARATOR, array( EXOPITE_NOTIFICATOR_PATH, 'vendors', 'plugin-update-checker', 'plugin-update-checker.php' ) );
 
-    $MyUpdateChecker = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+    $MyUpdateChecker = \YahnisElsts\PluginUpdateChecker\v6\PucFactory::buildUpdateChecker(
         'https://update.joeszalai.org/?action=get_metadata&slug=' . EXOPITE_NOTIFICATOR_PLUGIN_NAME, //Metadata URL.
         __FILE__, //Full path to the main plugin file.
         EXOPITE_NOTIFICATOR_PLUGIN_NAME //Plugin slug. Usually it's the same as the name of the directory.

@@ -6,7 +6,7 @@ Requires at least: 4.7
 Tested up to: 5.5.3
 Stable tag: 4.7.0
 License: GPLv3 or later
-Version: 20201113
+Version: 20261118
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Notify by emails or Telegram chats messages on selected actions.
@@ -148,6 +148,10 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 2. This is the second screen shot
 
 == Changelog ==
+
+= 20261118 =
+* NEW: needs the plugin Exopite Simple Options Framework (no bundled copy any more), shows an admin notice if it is missing
+* UPDATE: Plugin Update Checker 6.0, switched off by default: only active if wp-config.php sets define( 'EXOPITE_NOTIFICATOR_UPDATE_CHECKER', true ); Plugin Update Checker 6.0 requires PHP 7.4, on older PHP versions it is not loaded
 
 = 20201113 =
 * Add NextCloud Talk to send messages
